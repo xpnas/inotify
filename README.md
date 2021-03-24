@@ -26,4 +26,7 @@ a message notify center for weChat and telegram and email
     }
    ```
    4. 默认用户名admin，密码123456
+  
+## 系统截图
+  
 
