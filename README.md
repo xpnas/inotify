@@ -10,13 +10,13 @@ a message notify center for weChat and telegram and email
 
 类似Server酱
 
-## 使用方法
+## 一、使用方法
   1. 下载docker-compose.yaml文件
   2. 执行docker-compose up -d
     ```
     docker-compose up -d
     ```
-  4. 配置Nginx代理
+  3. 配置Nginx代理
    ```
    server
    {
@@ -30,7 +30,7 @@ a message notify center for weChat and telegram and email
    ```
    4. 默认用户名admin，密码123456
   
-## 系统截图
+## 二、系统截图
   
 ![](../master/public/A.png)
 
