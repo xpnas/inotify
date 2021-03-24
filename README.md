@@ -30,6 +30,10 @@ a message notify center for weChat and telegram and email
 ## 系统截图
   
 ![](../public/A.png)
+
 ![](../public/B.png)
+
 ![](../public/C.png)
+
 ![](../public/D.png)
+
