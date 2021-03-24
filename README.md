@@ -10,7 +10,10 @@ a message notify center for weChat and telegram and email
 ## 使用方法
   1. 下载docker-compose.yaml文件
   2. 执行docker-compose up -d
-  3. 配置Nginx代理
+    ```
+    docker-compose up -d
+    ```
+  4. 配置Nginx代理
    ```
    server
    {
