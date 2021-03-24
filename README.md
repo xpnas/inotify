@@ -29,11 +29,11 @@ a message notify center for weChat and telegram and email
   
 ## 系统截图
   
-![](../master/public/A.png  {width=1024px height=640px})
+![](../master/public/A.png)
 
-![](../master/public/B.png  {width=1024px height=640px})
+![](../master/public/B.png)
 
-![](../master/public/C.png  {width=1024px height=640px})
+![](../master/public/C.png)
 
-![](../master/public/D.png  {width=1024px height=640px})
+![](../master/public/D.png)
 
