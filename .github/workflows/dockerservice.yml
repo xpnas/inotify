@@ -1,0 +1,36 @@
+name: docker_service
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - 
+      name: Check out the repo
+      uses: actions/checkout@v2      
+    -
+      name: Set up QEMU
+      uses: docker/setup-qemu-action@v1
+    -
+      name: Login to DockerHub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+    - 
+      name: Docker Build & Push to Docker Hub For Service
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: ./Inotify/Dockerfile
+        platforms: linux/amd64
+        push: true
+        tags: ${{ secrets.DOCKERHUB_TAG }}:service
+
+    - name: 'Report Suecss'
+      run: curl ${{ secrets.INOTIFY }}/Inotify_service/dockerBuildComplated!
