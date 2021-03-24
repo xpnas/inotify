@@ -5,6 +5,7 @@
 a message notify center for weChat and telegram and email
 
 一个简易的消息通知系统，支持企业微信、电报机器人、邮件推送
+类似Server酱
 
 ## 使用方法
   1. 下载docker-compose.yaml文件
