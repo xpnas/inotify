@@ -1,0 +1,17 @@
+version: "3.6"
+services:
+  inotify_vue:
+    image: xpnas/inotify:vue
+    ports:
+        - "8000:80"
+    restart: always
+    container_name: inotify_vue
+  inotify_service:
+    image: xpnas/inotify:service
+    volumes:
+        - ./m_data:/im_data"
+    ports:
+        - "8001:80"
+    restart: always
+    container_name: inotify_service
+
