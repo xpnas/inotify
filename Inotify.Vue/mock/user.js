@@ -29,7 +29,7 @@ module.exports = [
     url: '/oauth/login',
     type: 'post',
     response: config => {
-      const { username } = config.body
+      const { username } = config.params
       const token = tokens[username]
      
       // mock error
