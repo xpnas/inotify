@@ -37,10 +37,10 @@ jobs:
         restore-keys: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('./Inotify.Vue/package.json') }}
 
     - name: InstallNode and BuildVue
-        run: |
-          cd ./Inotify.Vue
-          npm install
-          npm run build:prod
+      run: |
+        cd ./Inotify.Vue
+        npm install
+        npm run build:prod
 
     -
       name: Login to DockerHub
