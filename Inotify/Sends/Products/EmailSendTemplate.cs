@@ -15,22 +15,22 @@ namespace Inotify.Sends.Products
         [InputTypeAttribte(0, "FromName", "发件人", "管理员")]
         public string FromName { get; set; }
 
-        [InputTypeAttribte(0, "From", "发件地址", "abc@qq.com")]
+        [InputTypeAttribte(1, "From", "发件地址", "abc@qq.com")]
         public string From { get; set; }
 
-        [InputTypeAttribte(1, "Password", "发件密码", "123456")]
+        [InputTypeAttribte(2, "Password", "发件密码", "123456")]
         public string Password { get; set; }
 
-        [InputTypeAttribte(2, "Host", "SMTP地址", "smtp.qq.com")]
+        [InputTypeAttribte(3, "Host", "SMTP地址", "smtp.qq.com")]
         public string Host { get; set; }
 
-        [InputTypeAttribte(2, "Port", "SMTP端口", "587")]
+        [InputTypeAttribte(4, "Port", "SMTP端口", "587")]
         public int Port { get; set; }
 
-        [InputTypeAttribte(3, "EnableSSL", "SSL", "true|false")]
+        [InputTypeAttribte(5, "EnableSSL", "SSL", "true|false")]
         public bool EnableSSL { get; set; }
 
-        [InputTypeAttribte(4, "To", "收件箱", "abcd@qq.com")]
+        [InputTypeAttribte(6, "To", "收件箱", "abcd@qq.com")]
         public string To { get; set; }
     }
 

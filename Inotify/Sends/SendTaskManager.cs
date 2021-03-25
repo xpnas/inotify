@@ -101,7 +101,6 @@ namespace Inotify.Sends
         {
             foreach (var thread in m_sendThreads)
             {
-                // m_messages.Add(new StopMessage());
                 thread.Interrupt();
             }
             m_sendThreads.Clear();

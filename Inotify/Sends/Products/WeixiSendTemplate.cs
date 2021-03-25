@@ -22,7 +22,7 @@ namespace Inotify.Sends.Products
         [InputTypeAttribte(2, "AgentID", "应用ID", "AgentID")]
         public string AgentID { get; set; }
 
-        [InputTypeAttribte(2, "OpengId", "OpengId", "@all")]
+        [InputTypeAttribte(3, "OpengId", "OpengId", "@all")]
         public string OpengId { get; set; }
     }
 

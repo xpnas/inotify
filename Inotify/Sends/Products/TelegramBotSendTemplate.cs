@@ -13,10 +13,10 @@ namespace Inotify.Sends.Products
 
     public class TelegramBotAuth
     {
-        [InputTypeAttribte(1, "BotToken", "BotToken", "ID:Token")]
+        [InputTypeAttribte(0, "BotToken", "BotToken", "ID:Token")]
         public string BotToken { get; set; }
 
-        [InputTypeAttribte(2, "Chat_id", "ChatId", "ChatId")]
+        [InputTypeAttribte(1, "Chat_id", "ChatId", "ChatId")]
         public string Chat_id { get; set; }
     }
 
