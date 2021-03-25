@@ -1,6 +1,6 @@
 # inotify
-[![后端docker构建](https://github.com/xpnas/Inotify/actions/workflows/dockerservice.yml/badge.svg)](https://github.com/xpnas/Inotify/actions/workflows/dockerservice.yml)
-[![前端docker构建](https://github.com/xpnas/Inotify/actions/workflows/dockervue.yml/badge.svg)](https://github.com/xpnas/Inotify/actions/workflows/dockervue.yml)
+
+[![docker](https://github.com/xpnas/inotify/actions/workflows/docker.yml/badge.svg)](https://github.com/xpnas/inotify/actions/workflows/docker.yml)
 
 a message notify center for weChat and telegram and email
 
