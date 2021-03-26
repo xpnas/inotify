@@ -60,4 +60,4 @@ jobs:
         tags: ${{ secrets.DOCKERHUB_TAG }}:master
 
     - name: 'Report Suecss'
-      run: curl ${{ secrets.INOTIFY }}/Inotify/dockerBuildComplated!
+      run: curl ${{ secrets.INOTIFY }}/Inotify/masterIsOk!
