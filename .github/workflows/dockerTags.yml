@@ -58,15 +58,5 @@ jobs:
         push: true
         tags: ${{ secrets.DOCKERHUB_TAG }}:${{ github.ref }}
 
-    - 
-      name: Docker Build & Push to Docker Hub For latest
-      uses: docker/build-push-action@v2
-      with:
-        context: .
-        file: ./Inotify/Dockerfile
-        platforms: linux/amd64
-        push: true
-        tags: ${{ secrets.DOCKERHUB_TAG }}:latest
-
     - name: 'Report Suecss'
       run: curl ${{ secrets.INOTIFY }}/Inotify/dockerBuildComplated!
