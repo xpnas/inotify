@@ -13,7 +13,7 @@ a message notify center for weChat and telegram and email
 ## 一、使用方法
   1. Docker安装
    ```
-   docker run --name=inotify -d -p 8000:80 -v im_data:/im_data --restart=always xpnas/inotify:master
+   docker run --name=inotify -d -p 8000:80 -v inotify_data:/inotify_data --restart=always xpnas/inotify:master
    ```
 
   2. 配置Nginx代理
