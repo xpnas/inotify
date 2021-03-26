@@ -5,6 +5,7 @@ using Inotify.Sends;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Caching;
 using System.Text;
 using System.Web;
 
@@ -12,13 +13,13 @@ namespace Inotify.Sends
 {
     public class SendCacheStore
     {
-        private static readonly System.Runtime.Caching.MemoryCache m_cache;
+        private static readonly MemoryCache m_cache;
 
         private static readonly Dictionary<string, string> m_systemInfos;
 
         static SendCacheStore()
         {
-            m_cache = new System.Runtime.Caching.MemoryCache("CacheStore");
+            m_cache = new MemoryCache("CacheStore");
             m_systemInfos = DBManager.Instance.DBase.Query<SystemInfo>().ToList().ToDictionary(e => e.key, e => e.Value);
         }
 

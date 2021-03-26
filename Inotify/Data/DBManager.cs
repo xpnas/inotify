@@ -22,7 +22,7 @@ namespace Inotify.Data
 
         private readonly Migrator m_migrator;
 
-        private readonly string m_dataPath = "im_data";
+        private readonly string m_dataPath = "inotify_data";
 
         private readonly string m_jwtPath;
 
