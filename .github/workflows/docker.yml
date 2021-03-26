@@ -3,8 +3,6 @@ name: docker
 on:
   push:
     branches: [ master ]
-    tags:
-      - v.*
   pull_request:
     branches: [ master ]
 
@@ -15,11 +13,7 @@ jobs:
     - 
       name: Check out the repo
       uses: actions/checkout@v2
-
-    - name: Get version
-      id: get_version
-      run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
-
+      
     -
       name: Set up QEMU
       uses: docker/setup-qemu-action@v1
@@ -63,7 +57,7 @@ jobs:
         file: ./Inotify/Dockerfile
         platforms: linux/amd64
         push: true
-        tags: ${{ secrets.DOCKERHUB_TAG }}:${{ steps.get_version.outputs.VERSION }}
+        tags: ${{ secrets.DOCKERHUB_TAG }}:master
 
     - name: 'Report Suecss'
       run: curl ${{ secrets.INOTIFY }}/Inotify/dockerBuildComplated!
