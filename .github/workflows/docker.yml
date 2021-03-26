@@ -3,6 +3,8 @@ name: docker
 on:
   push:
     branches: [ master ]
+    tags:
+      - v.*
   pull_request:
     branches: [ master ]
 
@@ -57,7 +59,7 @@ jobs:
         file: ./Inotify/Dockerfile
         platforms: linux/amd64
         push: true
-        tags: ${{ secrets.DOCKERHUB_TAG }}:master
+        tags: ${{ secrets.DOCKERHUB_TAG }}:${{ github.ref }}
 
     - name: 'Report Suecss'
       run: curl ${{ secrets.INOTIFY }}/Inotify/dockerBuildComplated!
