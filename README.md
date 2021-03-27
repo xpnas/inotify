@@ -27,7 +27,7 @@
 ## 使用方法
   1. Docker安装
    ```
-   docker run --name=inotify -d -p 8000:80 -v inotify_data:/inotify_data --restart=always xpnas/inotify:master
+   docker run --name=inotify -d -p 8000:80 -v inotify_data:/inotify_data --restart=always xpnas/inotify:latest
    ```
 
   2. 配置Nginx代理
