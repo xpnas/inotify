@@ -38,7 +38,7 @@ const cdn = {
     `https://cdn.bootcdn.net/ajax/libs/js-cookie/${jscookieV}/js.cookie.js`,
     `https://cdn.bootcdn.net/ajax/libs/element-ui/${elementV}/index.js`,
     `https://cdn.bootcdn.net/ajax/libs/axios/${axiosV}/axios.min.js`,
-    `https://cdn.bootcdn.net/ajax/libs/moment.js/${momentV}/moment.min.js`,
+    `https://cdn.bootcdn.net/ajax/libs/moment.js/2.29.1/moment.min.js`,
     `https://cdn.bootcdn.net/ajax/libs/echarts/4.9.0-rc.1/echarts.min.js`,
     `https://cdn.bootcdn.net/ajax/libs/vue-router/${routerV}/vue-router.min.js`,
     `https://cdn.bootcdn.net/ajax/libs/element-ui/${elementV}/locale/zh-CN.js`,
