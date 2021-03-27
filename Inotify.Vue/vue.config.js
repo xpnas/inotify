@@ -6,24 +6,48 @@ function resolve(dir) {
   return path.join(__dirname, dir)
 }
 
-const name = defaultSettings.title || 'Inotify' // page title
+const name = defaultSettings.title || 'Inotify'
+const port = process.env.port || process.env.npm_config_port || 9528
 
-// If your port is set to 80,
-// use administrator privileges to execute the command line.
-// For example, Mac: sudo npm run
-// You can change the port by the following methods:
-// port = 9528 npm run dev OR npm run dev --port = 9528
-const port = process.env.port || process.env.npm_config_port || 9528 // dev port
+const axiosV = require('axios/package.json').version
+const echartsV = require('echarts/package.json').version
+const elementV = require('element-ui/package.json').version
+const jscookieV = require('js-cookie/package.json').version
+const normalizeV = require('normalize.css/package.json').version
+const vueV = require('vue/package.json').version
+const routerV = require('vue-router/package.json').version
+const vuexV = require('vuex/package.json').version
+const cookieV = require('js-cookie/package.json').version
+const nprogressV = require('nprogress/package.json').version
+const momentV = require('moment/package.json').version
+const cdn = {
+  externals: {
+    axios: 'axios',
+    echarts: 'echarts',
+    'element-ui': 'ELEMENT',
+    moment: 'moment',
+    locale: 'locale',
+    vue: 'Vue',
+    vuex: 'Vuex',
+    'vue-router': 'VueRouter'
+  },
+  css: [`https://cdn.bootcdn.net/ajax/libs/element-ui/${elementV}/theme-chalk/index.css`, `https://cdn.bootcdn.net/ajax/libs/nprogress/${nprogressV}/nprogress.min.css`, `https://lib.baomitu.com/normalize/${normalizeV}/normalize.css`],
+  js: [
+    `https://cdn.bootcdn.net/ajax/libs/vue/${vueV}/vue.min.js`,
+    `https://cdn.bootcdn.net/ajax/libs/vuex/${vuexV}/vuex.min.js`,
+    `https://cdn.bootcdn.net/ajax/libs/js-cookie/${jscookieV}/js.cookie.js`,
+    `https://cdn.bootcdn.net/ajax/libs/element-ui/${elementV}/index.js`,
+    `https://cdn.bootcdn.net/ajax/libs/axios/${axiosV}/axios.min.js`,
+    `https://cdn.bootcdn.net/ajax/libs/moment.js/${momentV}/moment.min.js`,
+    `https://cdn.bootcdn.net/ajax/libs/echarts/4.9.0-rc.1/echarts.min.js`,
+    `https://cdn.bootcdn.net/ajax/libs/vue-router/${routerV}/vue-router.min.js`,
+    `https://cdn.bootcdn.net/ajax/libs/element-ui/${elementV}/locale/zh-CN.js`,
+    `https://cdn.bootcdn.net/ajax/libs/js-cookie/${cookieV}/js.cookie.min.js`,
+    `https://cdn.bootcdn.net/ajax/libs/nprogress/${nprogressV}/nprogress.min.js`
+  ]
+}
 
-// All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {
-  /**
-   * You will need to set publicPath if you plan to deploy your site under a sub path,
-   * for example GitHub Pages. If you plan to deploy your site to https://foo.github.io/bar/,
-   * then publicPath should be set to "/bar/".
-   * In most cases please use '/' !!!
-   * Detail: https://cli.vuejs.org/config/#publicpath
-   */
   publicPath: '/',
   outputDir: '../Inotify/wwwroot',
   assetsDir: 'static',
@@ -39,9 +63,6 @@ module.exports = {
     before: require('./mock/mock-server.js')
   },
   configureWebpack: {
-    // provide the app's title in webpack's name field, so that
-    // it can be accessed in index.html to inject the correct title.
-    name: name,
     resolve: {
       alias: {
         '@': resolve('src')
@@ -49,19 +70,23 @@ module.exports = {
     },
     devtool: 'source-map',
     performance: {
-      hints: 'warning', // 枚举
-      hints: 'error', // 性能提示中抛出错误
-      hints: false, // 关闭性能提示
-      maxAssetSize: 200000, // 整数类型（以字节为单位）
-      maxEntrypointSize: 400000, // 整数类型（以字节为单位）
+      hints: 'warning',
+      hints: 'error',
+      hints: false,
+      maxAssetSize: 200000,
+      maxEntrypointSize: 400000,
       assetFilter: function(assetFilename) {
-        // 提供资源文件名的断言函数
         return assetFilename.endsWith('.css') || assetFilename.endsWith('.js')
       }
-    }
+    },
+    externals: cdn.externals
   },
   chainWebpack(config) {
-    // it can improve the speed of the first screen, it is recommended to turn on preload
+    config.plugin('html').tap(args => {
+      args[0].cdn = cdn
+      return args
+    })
+
     config.plugin('preload').tap(() => [
       {
         rel: 'preload',
@@ -72,10 +97,7 @@ module.exports = {
       }
     ])
 
-    // when there are many pages, it will cause too many meaningless requests
     config.plugins.delete('prefetch')
-
-    // set svg-sprite-loader
     config.module
       .rule('svg')
       .exclude.add(resolve('src/icons'))
