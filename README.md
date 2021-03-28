@@ -40,7 +40,11 @@
    }
    ```
  
-  3. 默认用户名admin，密码123456
+  3. 进入`Github/Settings/Developer settings/OAuth Apps`创建应用
+      * 记录`Client ID`，创建`Client secrets`
+      *  `Authorization callback URL`回调地址填写https://{您的域名}/api/oauth/githubLogin
+  4. 使用`默认用户名admin，密码123456`登陆后台/全局参数,修改Github登陆的`应用ID`、`应用密钥`并启动登陆
+  5. 建议将`管理权限`的用户名设置成自己的github用户名，再使用Github登陆后，在用户管理页面`删除默认账号admin`
   
 ## 系统截图
   
