@@ -55,19 +55,9 @@ namespace Inotify.Sends.Products
                     return true;
                 }
 
-                catch(Exception ex)
+                catch
                 {
-                    WebException wex = (WebException)ex;
-                    var s = wex.Response.GetResponseStream();
-                    string ss = "";
-                    int lastNum;
-                    do
-                    {
-                        lastNum = s.ReadByte();
-                        ss += (char)lastNum;
-                    } while (lastNum != -1);
-                    s.Close();
-          
+                    return false;
                 }
             }
 
