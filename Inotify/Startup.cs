@@ -96,10 +96,10 @@ namespace Inotify
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-#if !DEBUG
+
             app.UseStaticFiles();
             app.UseFileServer();
-#endif
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
