@@ -13,8 +13,12 @@ namespace Inotify.Sends.Products
         [InputTypeAttribte(0, "URL", "请求地址", "https://api.day.app/token/{title}/{data}")]
         public string URL { get; set; }
 
-        [InputTypeAttribte(1, "Encoding", "Encoding", "utf-8|ascii|gbk")]
+        [InputTypeAttribte(1, "Encoding", "Encoding", "utf-8")]
         public string Encoding { get; set; }
+
+
+        [InputTypeAttribte(1, "ContentType", "ContentType", "application/json")]
+        public string ContentType { get; set; }
 
         [InputTypeAttribte(2, "Data", "POST参数", @"{""msgid"":""123456"",""title"":""{title}"",""data"":""{data}""}")]
         public string Data { get; set; }
@@ -32,6 +36,10 @@ namespace Inotify.Sends.Products
             if (Auth.Data == null)
                 Auth.Data = "";
 
+            if (string.IsNullOrEmpty(Auth.ContentType))
+                Auth.ContentType = "application/json";
+
+
             if (string.IsNullOrEmpty(Auth.Encoding))
                 Auth.Encoding = "utf-8";
 
@@ -43,7 +51,7 @@ namespace Inotify.Sends.Products
                 var data = Auth.Data.Replace("{title}", message.Title).Replace("{data}", message.Data);
                 var bytes = Encoding.GetEncoding(Auth.Encoding).GetBytes(data);
                 webRequest.Method = "POST";
-                webRequest.ContentType = "application/x-www-urlencoded";
+                webRequest.ContentType = Auth.ContentType;
                 webRequest.ContentLength = bytes.Length;
                 var requestStream = webRequest.GetRequestStream();
                 requestStream.Write(bytes, 0, bytes.Length);

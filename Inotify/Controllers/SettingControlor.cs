@@ -1,6 +1,7 @@
 ﻿using Inotify.Data;
 using Inotify.Data.Models;
 using Inotify.Sends;
+using Inotify.Sends.Products;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +18,7 @@ namespace Inotify.Controllers
 {
     [ApiController]
     [Route("api/setting")]
-    public class SettingControlor : BaseController
+    public class SettingControlor : BaseControlor
     {
         [HttpGet, Authorize(Policys.SystemOrUsers)]
         public JsonResult Index()
@@ -48,7 +49,7 @@ namespace Inotify.Controllers
                         sendTemplate.Name = sendAuthInfo.Name;
                         sendTemplate.AuthData = sendAuthInfo.AuthData;
                         sendTemplate.SendAuthId = sendAuthInfo.Id;
-                        sendTemplate.IsActive = sendAuthInfo.Id == userInfo.SendAuthId;
+                        sendTemplate.IsActive = sendAuthInfo.Active;
                         sendTemplate.AuthToTemplate(sendAuthInfo.AuthData);
                         userSendTemplates.Add(sendTemplate);
                     }
@@ -68,9 +69,9 @@ namespace Inotify.Controllers
                 var authInfo = DBManager.Instance.DBase.Query<SendAuthInfo>().FirstOrDefault(e => e.Id == sendAuthId && e.UserId == userInfo.Id);
                 if (authInfo != null)
                 {
-                    userInfo.SendAuthId = state ? sendAuthId : -1;
-                    DBManager.Instance.DBase.Update(userInfo);
-                    return OK(userInfo);
+                    authInfo.Active = state;
+                    DBManager.Instance.DBase.Update(authInfo);
+                    return OK(authInfo);
                 }
             }
             return Fail();
@@ -98,18 +99,28 @@ namespace Inotify.Controllers
             var userInfo = DBManager.Instance.GetUser(UserName);
             if (userInfo != null && inputTemeplate.Key != null && inputTemeplate.Name != null)
             {
-                var authInfo = inputTemeplate.TemplateToAuth();
-                var sendAuth = new SendAuthInfo()
+                var barkKey = typeof(BarkSendTemplate).GetCustomAttributes(typeof(SendMethodKeyAttribute), false).OfType<SendMethodKeyAttribute>().First().Key;
+                if (barkKey == inputTemeplate.Key
+                    && DBManager.Instance.DBase.Query<SendAuthInfo>().FirstOrDefault(e => e.UserId == userInfo.Id && e.SendMethodTemplate == barkKey) != null)
                 {
-                    UserId = userInfo.Id,
-                    SendMethodTemplate = inputTemeplate.Key,
-                    AuthData = authInfo,
-                    Name = inputTemeplate.Name,
-                    CreateTime = DateTime.Now,
-                    ModifyTime = DateTime.Now,
-                };
-                DBManager.Instance.DBase.Insert(sendAuth);
-                return OK(sendAuth);
+                    return Fail(406, "您只能添加一个BARK通道");
+                }
+                else
+                {
+                    var authInfo = inputTemeplate.TemplateToAuth();
+                    var sendAuth = new SendAuthInfo()
+                    {
+                        UserId = userInfo.Id,
+                        SendMethodTemplate = inputTemeplate.Key,
+                        AuthData = authInfo,
+                        Name = inputTemeplate.Name,
+                        CreateTime = DateTime.Now,
+                        ModifyTime = DateTime.Now,
+                    };
+                    DBManager.Instance.DBase.Insert(sendAuth);
+                    return OK(sendAuth);
+
+                }
             }
             return Fail();
         }

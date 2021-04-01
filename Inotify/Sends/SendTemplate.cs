@@ -47,6 +47,8 @@ namespace Inotify.Sends
         public InputType? Type { get; set; }
         public int? Order { get; set; }
         public string? Value { get; set; }
+
+        public bool Visuable { get; set; }
     }
 
     public class InputTemeplate
@@ -109,7 +111,8 @@ namespace Inotify.Sends
     {
         public InputTypeValue InputTypeData { get; set; }
 
-        private InputTypeAttribte(int order, string name, string description, string defaultValue, InputType type)
+   
+        private InputTypeAttribte(int order, string name, string description, string defaultValue, InputType type,bool visuable=true)
         {
             InputTypeData = new InputTypeValue
             {
@@ -117,18 +120,19 @@ namespace Inotify.Sends
                 Description = description,
                 Default = defaultValue,
                 Order = order,
-                Type = type
+                Type = type,
+                Visuable=visuable
             };
         }
 
-        public InputTypeAttribte(int order, string name, string description, string defaultValue)
-            : this(order, name, description, defaultValue, InputType.TEXT)
+        public InputTypeAttribte(int order, string name, string description, string defaultValue, bool visuable = true)
+            : this(order, name, description, defaultValue, InputType.TEXT, visuable)
         {
 
         }
 
-        public InputTypeAttribte(int order, string name, string description, bool defaultValue)
-           : this(order, name, description, "", InputType.CHECK)
+        public InputTypeAttribte(int order, string name, string description, bool defaultValue, bool visuable = true)
+           : this(order, name, description, "", InputType.CHECK, visuable)
         {
             InputTypeData.Default = defaultValue ? "是" : "否";
         }
@@ -152,6 +156,7 @@ namespace Inotify.Sends
                 .SelectMany(e => e.GetCustomAttributes(typeof(InputTypeAttribte), false))
                 .Cast<InputTypeAttribte>()
                 .Select(e => e.InputTypeData)
+                .Where(e=>e.Visuable)
                 .ToList();
 
             var sendMethodKeyAttribute = this.GetType().GetCustomAttribute<SendMethodKeyAttribute>();

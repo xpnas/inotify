@@ -97,7 +97,7 @@ namespace Inotify
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
 
-            app.UseStaticFiles();
+           app.UseStaticFiles();
             app.UseFileServer();
 
             if (env.IsDevelopment())
@@ -108,6 +108,11 @@ namespace Inotify
             var options = new RewriteOptions();
             options.AddRewrite(@"api/(.*).send/(.*)/(.*)", "api/send?token=$1&title=$2&data=$3", true);
             options.AddRewrite(@"api/(.*).send/(.*)", "api/send?token=$1&title=$2", true);
+            options.AddRewrite(@"\?act=(.*)/{.*}/(.*)/(.*)", "api/send?token=$1&title=$3&data=$4", true);
+            options.AddRewrite(@"\?act=(.*)/{.*}/(.*)", "api/send?token=$1&title=$3", true);
+
+
+            //https://im.xpnas.com/?act=123456/ZtCLMPWQWtjJQpKmQS6hoV/
 
             app.UseRewriter(options);
             app.UseRouting();

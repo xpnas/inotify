@@ -15,11 +15,9 @@ using System.Threading;
 
 namespace Inotify.Sends
 {
-
     public class SendTaskManager
     {
         private static SendTaskManager m_Instance;
-
         public static SendTaskManager Instance
         {
             get
@@ -154,42 +152,48 @@ namespace Inotify.Sends
                 try
                 {
                     var message = m_sendMessages.Take();
-                    var authData = DBManager.Instance.GetAuth(message.Token, out string temeplateId);
-                    if (temeplateId != null && authData != null)
+                    DBManager.Instance.GetAuth(message.Token, out SendAuthInfo[] sendAuthInfos);
+                    foreach (var authInfo in sendAuthInfos)
                     {
-                        if (m_sendMethodTemplateTypes.ContainsKey(temeplateId))
+                        var authData = authInfo.AuthData;
+                        var temeplateId = authInfo.SendMethodTemplate;
+                        if (temeplateId != null && authData != null)
                         {
-                            var sendMethodTemplateActor = Activator.CreateInstance(m_sendMethodTemplateTypes[temeplateId]);
-                            if (sendMethodTemplateActor != null)
+                            if (m_sendMethodTemplateTypes.ContainsKey(temeplateId))
                             {
-                                var sendMethodType = sendMethodTemplateActor.GetType();
-                                var compositonMethod = sendMethodType.GetMethod("Composition");
-                                if (compositonMethod != null)
+                                var sendMethodTemplateActor = Activator.CreateInstance(m_sendMethodTemplateTypes[temeplateId]);
+                                if (sendMethodTemplateActor != null)
                                 {
-                                    compositonMethod.Invoke(sendMethodTemplateActor, new object[] { authData });
-                                }
-
-                                var sendMessageMethod = sendMethodType.GetMethod("SendMessage");
-                                if (sendMessageMethod != null)
-                                {
-                                    var result = sendMessageMethod.Invoke(sendMethodTemplateActor, new object[] { message });
-                                    if (result != null)
+                                    var sendMethodType = sendMethodTemplateActor.GetType();
+                                    var compositonMethod = sendMethodType.GetMethod("Composition");
+                                    if (compositonMethod != null)
                                     {
-                                        m_analyseMessages.Add(message);
-                                        if ((bool)result)
-                                        {
-                                            OnSendSucessed?.Invoke(this, message);
-                                            continue;
-                                        }
+                                        compositonMethod.Invoke(sendMethodTemplateActor, new object[] { authData });
                                     }
 
+                                    var sendMessageMethod = sendMethodType.GetMethod("SendMessage");
+                                    if (sendMessageMethod != null)
+                                    {
+                                        var result = sendMessageMethod.Invoke(sendMethodTemplateActor, new object[] { message });
+                                        if (result != null)
+                                        {
+                                            m_analyseMessages.Add(message);
+                                            if ((bool)result)
+                                            {
+                                                OnSendSucessed?.Invoke(this, message);
+                                                continue;
+                                            }
+                                            else
+                                            {
+                                                OnSendFailed?.Invoke(this, message);
+                                            }
+                                        }
+
+                                    }
                                 }
                             }
                         }
                     }
-
-                    OnSendFailed?.Invoke(this, message);
-
                 }
                 catch (ThreadInterruptedException)
                 {

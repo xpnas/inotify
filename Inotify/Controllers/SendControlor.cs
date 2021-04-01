@@ -9,7 +9,7 @@ namespace Inotify.Controllers
 {
     [ApiController]
     [Route("api")]
-    public class SendController : BaseController
+    public class SendController : BaseControlor
     {
         [HttpGet, Route("send")]
         public JsonResult Send(string token, string title, string? data)

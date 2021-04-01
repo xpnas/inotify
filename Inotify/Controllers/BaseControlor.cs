@@ -36,7 +36,7 @@ namespace Inotify.Controllers
     }
 
 
-    public class BaseController : ControllerBase
+    public class BaseControlor : ControllerBase
     {
         public string UserName
         {
@@ -64,30 +64,44 @@ namespace Inotify.Controllers
             }
         }
 
-        protected JsonResult OK(object? obj = null)
+        protected JsonResult OK()
         {
-            return new JsonResult(new
+            return Json(new
             {
                 code = 200,
-                data = obj ?? "sucess"
+                message = "sucess",
+                timestamp = (DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds
+            });
+        }
+
+        protected JsonResult OK(object obj )
+        {
+            return Json(new
+            {
+                code = 200,
+                message = "sucess",
+                data = obj ?? "",
+                timestamp = (DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds
             });
         }
 
         protected JsonResult Fail()
         {
-            return new JsonResult(new
+            return Json(new
             {
                 code = 404,
-                data = "fail"
+                message = "failed",
+                timestamp = (DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds
             });
         }
 
         protected JsonResult Fail(int code)
         {
-            return new JsonResult(new
+            return Json(new
             {
                 code,
-                data = "fail"
+                message = "failed",
+                timestamp = (DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds
             });
         }
 
@@ -96,11 +110,14 @@ namespace Inotify.Controllers
             return new JsonResult(new
             {
                 code,
-                message
+                message,
+                timestamp = (DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds
             });
         }
 
-
-
+        protected JsonResult Json(object obj)
+        {
+            return new JsonResult(obj);
+        }
     }
 }

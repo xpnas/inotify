@@ -22,5 +22,23 @@ namespace Inotify.Common
             return result.Replace("-", "");
         }
 
+        public static string UrlEncode(this string str)
+        {
+            string urlStr = System.Web.HttpUtility.UrlEncode(str);
+            return urlStr;
+        }
+
+        public static string Base64Encode(this string source)
+        {
+            byte[] bytes = (Encoding.UTF8.GetBytes(source));
+            return Convert.ToBase64String(bytes);
+
+        }
+
+        public static string Base64Decode(this string source)
+        {
+            var bytes = Convert.FromBase64String(source);
+            return System.Text.Encoding.Default.GetString(bytes);
+        }
     }
 }

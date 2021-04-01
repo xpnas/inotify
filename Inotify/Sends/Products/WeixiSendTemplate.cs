@@ -85,7 +85,7 @@ namespace Inotify.Sends.Products
             var content = string.IsNullOrEmpty(data) ? title : title + "\n" + data;
             var isImage = !String.IsNullOrEmpty(title) && IsUrl(title) && IsImage(title) && String.IsNullOrEmpty(data);
             var imageData = isImage ? GetImage(title) : null;
-            string mediaId = null;
+            string mediaId = string.Empty;
             if (imageData != null)
                 mediaId = UpLoadIMage(accessToken, imageData);
 
@@ -171,17 +171,21 @@ namespace Inotify.Sends.Products
                 postStream.Write(endBoundaryBytes, 0, endBoundaryBytes.Length);
                 postStream.Close();
 
-                HttpWebResponse response = request.GetResponse() as HttpWebResponse;
-                Stream instream = response.GetResponseStream();
-                StreamReader sr = new StreamReader(instream, Encoding.UTF8);
-                string content = sr.ReadToEnd();
-                var result = JObject.Parse(content);
-                return result.Value<string>("media_id").ToString();
+                if (request.GetResponse() is HttpWebResponse response)
+                {
+                    Stream instream = response.GetResponseStream();
+                    StreamReader sr = new StreamReader(instream, Encoding.UTF8);
+                    string content = sr.ReadToEnd();
+                    var result = JObject.Parse(content);
+                    return result.Value<string>("media_id").ToString();
+                }
             }
             catch
             {
-                return null;
+                
             }
+
+            return null;
         }
     }
 }

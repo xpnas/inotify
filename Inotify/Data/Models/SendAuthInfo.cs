@@ -26,5 +26,8 @@ namespace Inotify.Data.Models
 
         [NPoco.Column("createTime")]
         public DateTime CreateTime { get; set; }
+
+        [NPoco.Column("active")]
+        public bool Active { get; set; }
     }
 }

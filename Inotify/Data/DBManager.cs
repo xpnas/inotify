@@ -7,6 +7,7 @@ using Microsoft.IdentityModel;
 using Newtonsoft.Json;
 using NPoco;
 using NPoco.Migrations;
+using NPoco.Migrations.CurrentVersion;
 using System;
 using System.Data;
 using System.IO;
@@ -18,6 +19,8 @@ namespace Inotify.Data
 {
     public class DBManager
     {
+        private readonly string MigrationName = "inotify";
+
         private readonly SqliteConnection m_dbConnection;
 
         private readonly Migrator m_migrator;
@@ -40,6 +43,8 @@ namespace Inotify.Data
             }
         }
 
+        public readonly string Inotify_Data;
+
         public Database DBase { get; private set; }
 
         private static DBManager? m_Instance;
@@ -58,13 +63,18 @@ namespace Inotify.Data
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
+                Inotify_Data = Path.Combine(Directory.GetCurrentDirectory(), m_dataPath);
+                if (!Directory.Exists(Inotify_Data)) Directory.CreateDirectory(Inotify_Data);
+
                 m_jwtPath = Path.Combine(Directory.GetCurrentDirectory(), "/" + m_dataPath + "/jwt.json");
                 m_dbPath = Path.Combine(Directory.GetCurrentDirectory(), "/" + m_dataPath + "/data.db");
+
+
             }
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                var dataPath = Path.Combine(Directory.GetCurrentDirectory(), m_dataPath);
-                if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
+                Inotify_Data = Path.Combine(Directory.GetCurrentDirectory(), m_dataPath);
+                if (!Directory.Exists(Inotify_Data)) Directory.CreateDirectory(Inotify_Data);
 
                 m_jwtPath = Path.Combine(Directory.GetCurrentDirectory(), m_dataPath + "/jwt.json");
                 m_dbPath = Path.Combine(Directory.GetCurrentDirectory(), m_dataPath + "/data.db");
@@ -132,42 +142,43 @@ namespace Inotify.Data
             return authInfo.AuthData;
         }
 
+        public void GetAuth(string token, out SendAuthInfo[] sendAuthInfos)
+        {
+            sendAuthInfos = null;
+            var upToekn = token.ToUpper();
+            var userInfo = DBManager.Instance.DBase.Query<SendUserInfo>().FirstOrDefault(e => e.Token == upToekn && e.Active);
+            if (userInfo != null)
+
+                sendAuthInfos = DBManager.Instance.DBase.Query<SendAuthInfo>().Where(e => e.UserId == userInfo.Id && e.Active).ToArray();
+
+        }
+
 
         public void Run()
         {
-            if (!m_migrator.TableExists<SendInfo>())
-                m_migrator.CreateTable<SendInfo>(true).Execute();
+
+            var codeVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+            var migrationBuilder = new MigrationBuilder(MigrationName, DBase);
+            var versionProvider = new DatabaseCurrentVersionProvider(DBase);
 
             if (!m_migrator.TableExists<SystemInfo>())
             {
-                m_migrator.CreateTable<SystemInfo>(true).Execute();
-
-                DBase.Insert(new SystemInfo()
-                {
-                    key = "administrators",
-                    Value = "admin"
-                });
+                migrationBuilder.Append(new Version(codeVersion.ToString()), new LatestMigration());
+                versionProvider.SetMigrationVersion(MigrationName, new Version(codeVersion.ToString()));
             }
-
-            if (!m_migrator.TableExists<SendUserInfo>())
+            else
             {
-                m_migrator.CreateTable<SendUserInfo>(true).Execute();
-                SendUserInfo userInfo = new SendUserInfo()
+                if (versionProvider.GetMigrationVersion(MigrationName).ToString() == "0.0")
                 {
-                    Token = "112D77BAD9704FFEAECD716B5678DFBE".ToUpper(),
-                    UserName = "admin",
-                    Email = "admin@qq.com",
-                    CreateTime = DateTime.Now,
-                    Active = true,
-                    Password = "123456".ToMd5()
-                };
-                DBase.Insert(userInfo);
-            }
+                    versionProvider.SetMigrationVersion(MigrationName, new Version(1, 0, 0, 0));
+                }
 
-            if (!m_migrator.TableExists<SendAuthInfo>())
-            {
-                m_migrator.CreateTable<SendAuthInfo>(true).Execute();
+                var builder = new MigrationBuilder(MigrationName, DBase);
+                builder.Append(new Version(2, 0, 0, 0), new V2UpdateMigration());
+                builder.Execute();
             }
         }
     }
+
+
 }

@@ -1,7 +1,7 @@
 <template>
 <div class='app-container'>
     <el-dialog :title='title' :visible.sync='dialogVisible' :append-to-body='true'>
-        <el-form ref="authform" :model="authform" label-width="100px" label-position='right' :rules="authformrules">
+        <el-form ref="authform" :model="authform" label-width="120px" label-position='right' :rules="authformrules">
             <el-form-item label='通道类型'>
                 <el-select :disabled='isModify' value-key="key" v-model='selectTemplate' placeholder='请选择' @change="selectTemplateChange">
                     <el-option v-for="item in sendTemplates" :key="item.key" :label="item.name" :value="item">
