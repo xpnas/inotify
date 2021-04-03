@@ -143,11 +143,12 @@ namespace Inotify
                 }
                 rewriteContext.Result = RuleResult.ContinueRules;
             });
+            options.AddRewrite(@"^api/(.*).send/(.*)/(.*)", "api/send?token=$1&title=$2&data=$3", true);
+            options.AddRewrite(@"^api/(.*).send/(.*)", "api/send?token=$1&title=$2", true);
 
             options.AddRewrite(@"^(.*).send/(.*)/(.*)", "api/send?token=$1&title=$2&data=$3", true);
             options.AddRewrite(@"^(.*).send/(.*)", "api/send?token=$1&title=$2", true);
-            options.AddRewrite(@"^api/(.*).send/(.*)/(.*)", "api/send?token=$1&title=$2&data=$3", true);
-            options.AddRewrite(@"^api/(.*).send/(.*)", "api/send?token=$1&title=$2", true);
+
             app.UseRewriter(options);
             app.UseRouting();
 
