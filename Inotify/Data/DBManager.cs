@@ -105,16 +105,38 @@ namespace Inotify.Data
 
 
             m_dbConnection = new SqliteConnection(string.Format("Data Source={0}", m_dbPath));
+
             if (m_dbConnection.State == ConnectionState.Closed)
                 m_dbConnection.Open();
 
-            DBase = new NPoco.Database(m_dbConnection, DatabaseType.SQLite);
+            DBase = new Database(m_dbConnection, DatabaseType.SQLite);
+            DBase.KeepConnectionAlive = true;
             m_migrator = new Migrator(DBase);
         }
 
-        public bool IsSendKey(string token)
+        public bool IsToken(string token,out bool hasActive)
         {
-            return DBase.Query<SendUserInfo>().Any(e => e.Token == token);
+            hasActive = false;
+            var userInfo= DBase.Query<SendUserInfo>().FirstOrDefault(e => e.Token == token);
+            if (userInfo != null)
+            {
+                hasActive= DBase.Query<SendAuthInfo>().Any(e => e.UserId== userInfo.Id && e.Active);
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool IsSendKey(string key, out bool isActive)
+        {
+            isActive = false;
+            var sendAuthInfo = DBase.Query<SendAuthInfo>().FirstOrDefault(e => e.Key == key);
+            if (sendAuthInfo != null)
+            {
+                isActive = sendAuthInfo.Active;
+                return true;
+            }
+            return false;
         }
 
         public bool IsUser(string userName)
@@ -124,10 +146,10 @@ namespace Inotify.Data
 
         public SendUserInfo GetUser(string userName)
         {
-            return DBase.Query<SendUserInfo>().First(e => e.UserName == userName);
+            return DBase.Query<SendUserInfo>().FirstOrDefault(e => e.UserName == userName);
         }
 
-        public string GetAuth(string token, out string guid)
+        public string GetSendAuthInfo(string token, out string guid)
         {
             guid = string.Empty;
             var upToekn = token.ToUpper();
@@ -142,17 +164,24 @@ namespace Inotify.Data
             return authInfo.AuthData;
         }
 
-        public void GetAuth(string token, out SendAuthInfo[] sendAuthInfos)
+        public void GetSendAuthInfos(string token, string key, out SendAuthInfo[] sendAuthInfos)
         {
             sendAuthInfos = null;
             var upToekn = token.ToUpper();
             var userInfo = DBManager.Instance.DBase.Query<SendUserInfo>().FirstOrDefault(e => e.Token == upToekn && e.Active);
             if (userInfo != null)
-
-                sendAuthInfos = DBManager.Instance.DBase.Query<SendAuthInfo>().Where(e => e.UserId == userInfo.Id && e.Active).ToArray();
+            {
+                if (string.IsNullOrEmpty(key))
+                {
+                    sendAuthInfos = DBManager.Instance.DBase.Query<SendAuthInfo>().Where(e => e.UserId == userInfo.Id && e.Active).ToArray();
+                }
+                else
+                {
+                    sendAuthInfos = DBManager.Instance.DBase.Query<SendAuthInfo>().Where(e => e.UserId == userInfo.Id && e.Active &&e.Key==key).ToArray();
+                }
+            }
 
         }
-
 
         public void Run()
         {
@@ -175,10 +204,9 @@ namespace Inotify.Data
 
                 var builder = new MigrationBuilder(MigrationName, DBase);
                 builder.Append(new Version(2, 0, 0, 0), new V2UpdateMigration());
+                builder.Append(new Version(2, 0, 0, 1), new V2001UpdateMigration());
                 builder.Execute();
             }
         }
     }
-
-
 }

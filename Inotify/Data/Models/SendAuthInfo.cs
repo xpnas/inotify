@@ -1,5 +1,5 @@
 ﻿using System;
-
+using Inotify.Common;
 namespace Inotify.Data.Models
 {
     [NPoco.TableName("sendAuthInfo")]
@@ -19,7 +19,20 @@ namespace Inotify.Data.Models
         public string SendMethodTemplate { get; set; }
 
         [NPoco.Column("authData")]
-        public string AuthData { get; set; }
+        public string AuthDataSave { get; set; }
+
+        [NPoco.Ignore]
+        public string AuthData
+        {
+            get
+            {
+                return AuthDataSave.Base64Decode();
+            }
+            set
+            {
+                AuthDataSave = value.Base64Encode();
+            }
+        }
 
         [NPoco.Column("modifyTime")]
         public DateTime ModifyTime { get; set; }
@@ -29,5 +42,9 @@ namespace Inotify.Data.Models
 
         [NPoco.Column("active")]
         public bool Active { get; set; }
+
+        [NPoco.Column("key")]
+        public string Key { get; set; }
+
     }
 }

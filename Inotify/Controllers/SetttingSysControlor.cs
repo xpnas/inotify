@@ -30,6 +30,9 @@ namespace Inotify.Controllers
                 githubClientID = SendCacheStore.GetSystemValue("githubClientID"),
                 githubClientSecret = SendCacheStore.GetSystemValue("githubClientSecret"),
                 githubEnable = githubEnable != "" && bool.Parse(githubEnable),
+                barkKeyId= SendCacheStore.GetSystemValue("barkKeyId"),
+                barkTeamId = SendCacheStore.GetSystemValue("barkTeamId"),
+                barkPrivateKey = SendCacheStore.GetSystemValue("barkPrivateKey"),
             });
         }
 
@@ -41,7 +44,10 @@ namespace Inotify.Controllers
             string? proxyenable,
             string? githubClientID,
             string? githubClientSecret,
-            string? githubEnable)
+            string? githubEnable,
+            string? barkKeyId,
+            string? barkTeamId,
+            string? barkPrivateKey)
         {
             SendCacheStore.SetSystemValue("sendthread", sendthread);
             SendCacheStore.SetSystemValue("administrators", administrators);
@@ -50,6 +56,9 @@ namespace Inotify.Controllers
             SendCacheStore.SetSystemValue("githubClientID", githubClientID);
             SendCacheStore.SetSystemValue("githubClientSecret", githubClientSecret);
             SendCacheStore.SetSystemValue("githubEnable", githubEnable);
+            SendCacheStore.SetSystemValue("barkKeyId", barkKeyId);
+            SendCacheStore.SetSystemValue("barkTeamId", barkTeamId);
+            SendCacheStore.SetSystemValue("barkPrivateKey", barkPrivateKey);
 
             SendTaskManager.Instance.Stop();
             SendTaskManager.Instance.Run();

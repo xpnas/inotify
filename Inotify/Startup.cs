@@ -20,6 +20,7 @@ using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Encodings.Web;
+using System.Text.RegularExpressions;
 using System.Text.Unicode;
 using System.Threading.Tasks;
 
@@ -96,26 +97,63 @@ namespace Inotify
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-
-           app.UseStaticFiles();
-            app.UseFileServer();
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
 
             var options = new RewriteOptions();
-            options.AddRewrite(@"api/(.*).send/(.*)/(.*)", "api/send?token=$1&title=$2&data=$3", true);
-            options.AddRewrite(@"api/(.*).send/(.*)", "api/send?token=$1&title=$2", true);
-            options.AddRewrite(@"\?act=(.*)/{.*}/(.*)/(.*)", "api/send?token=$1&title=$3&data=$4", true);
-            options.AddRewrite(@"\?act=(.*)/{.*}/(.*)", "api/send?token=$1&title=$3", true);
+            options.Add(rewriteContext =>
+            {
+                Match match;
+                if (rewriteContext.HttpContext.Request.Path == "/")
+                {
+                    var queryValue = rewriteContext.HttpContext.Request.QueryString.Value;
+                    match = Regex.Match(queryValue, @"^\?act=(.*)/(.*)/(.*)/(.*)$");
+                    var groups = match.Groups;
+                    if (match.Success)
+                    {
+                        rewriteContext.HttpContext.Request.Path = @"/api/send";
+                        rewriteContext.HttpContext.Request.QueryString = new QueryString($"?token={groups[1]}&key={groups[2]}&title={groups[3]}&date={groups[4]}");
+                    }
+                    else
+                    {
+                        match = Regex.Match(queryValue, @"^\?act=(.*)/(.*)/(.*)$");
+                        if (match.Success)
+                        {
+                            rewriteContext.HttpContext.Request.Path = @"/api/send";
+                            rewriteContext.HttpContext.Request.QueryString = new QueryString($"?token={groups[1]}&key={groups[2]}&title={groups[3]}");
+                        }
+                        else
+                        {
+                            match = Regex.Match(queryValue, @"^\?act=(.*)/(.*)$");
+                            if (match.Success)
+                            {
+                                rewriteContext.HttpContext.Request.Path = @"/api/send";
+                                rewriteContext.HttpContext.Request.QueryString = new QueryString($"?token={groups[1]}&key={groups[2]}");
+                            }
+                            else if(rewriteContext.HttpContext.Request.QueryString.Value.StartsWith("?"))
+                            {
+                                rewriteContext.HttpContext.Request.Path = @"/info";
+                                rewriteContext.HttpContext.Request.QueryString = new QueryString();
+                            }
+                        }
+                    }
 
+                }
+                rewriteContext.Result = RuleResult.ContinueRules;
+            });
 
-            //https://im.xpnas.com/?act=123456/ZtCLMPWQWtjJQpKmQS6hoV/
-
+            options.AddRewrite(@"^(.*).send/(.*)/(.*)", "api/send?token=$1&title=$2&data=$3", true);
+            options.AddRewrite(@"^(.*).send/(.*)", "api/send?token=$1&title=$2", true);
+            options.AddRewrite(@"^api/(.*).send/(.*)/(.*)", "api/send?token=$1&title=$2&data=$3", true);
+            options.AddRewrite(@"^api/(.*).send/(.*)", "api/send?token=$1&title=$2", true);
             app.UseRewriter(options);
             app.UseRouting();
+
+            app.UseStaticFiles();
+            app.UseFileServer();
+
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>

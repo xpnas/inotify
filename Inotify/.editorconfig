@@ -17,3 +17,9 @@ dotnet_diagnostic.CS8602.severity = none
 
 # CS8600: 将 null 文本或可能的 null 值转换为不可为 null 类型。
 dotnet_diagnostic.CS8600.severity = none
+
+# IDE0037: 使用推断的成员名称
+dotnet_diagnostic.IDE0037.severity = none
+
+# IDE0008: 使用显式类型
+dotnet_diagnostic.IDE0008.severity = none

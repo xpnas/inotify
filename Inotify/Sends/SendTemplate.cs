@@ -31,16 +31,25 @@ namespace Inotify.Sends
 
         public int Order;
 
-        public SendMethodKeyAttribute(string key, string name, bool open = true)
+        public string Waring;
+
+        public SendMethodKeyAttribute(string key, string name, bool open = true, string waring = "")
         {
             Key = key;
             Name = name;
             Open = open;
+            Waring = waring;
         }
     }
 
     public class InputTypeValue
     {
+
+        public InputTypeValue()
+        {
+            Show = true;
+            Readonly = false;
+        }
         public string? Name { get; set; }
         public string? Description { get; set; }
         public string? Default { get; set; }
@@ -48,7 +57,11 @@ namespace Inotify.Sends
         public int? Order { get; set; }
         public string? Value { get; set; }
 
-        public bool Visuable { get; set; }
+        public string? Warning { get; set; }
+
+        public bool Show { get; set; }
+
+        public bool Readonly { get; set; }
     }
 
     public class InputTemeplate
@@ -57,6 +70,7 @@ namespace Inotify.Sends
         public string? Type { get; set; }
         public string? Name { get; set; }
         public bool IsActive { get; set; }
+        public string Warning { get; set; }
         public string? AuthData { get; set; }
         public int? SendAuthId { get; set; }
         public List<InputTypeValue>? Values { get; set; }
@@ -112,7 +126,7 @@ namespace Inotify.Sends
         public InputTypeValue InputTypeData { get; set; }
 
    
-        private InputTypeAttribte(int order, string name, string description, string defaultValue, InputType type,bool visuable=true)
+        private InputTypeAttribte(int order, string name, string description, string defaultValue, InputType type,bool show=true,bool readOnly=false)
         {
             InputTypeData = new InputTypeValue
             {
@@ -121,18 +135,19 @@ namespace Inotify.Sends
                 Default = defaultValue,
                 Order = order,
                 Type = type,
-                Visuable=visuable
+                Show = show,
+                Readonly = readOnly
             };
         }
 
-        public InputTypeAttribte(int order, string name, string description, string defaultValue, bool visuable = true)
-            : this(order, name, description, defaultValue, InputType.TEXT, visuable)
+        public InputTypeAttribte(int order, string name, string description, string defaultValue, bool show = true, bool readOnly = false)
+            : this(order, name, description, defaultValue, InputType.TEXT, show, readOnly)
         {
 
         }
 
-        public InputTypeAttribte(int order, string name, string description, bool defaultValue, bool visuable = true)
-           : this(order, name, description, "", InputType.CHECK, visuable)
+        public InputTypeAttribte(int order, string name, string description, bool defaultValue, bool show = true, bool readOnly = false)
+           : this(order, name, description, "", InputType.CHECK, show, readOnly)
         {
             InputTypeData.Default = defaultValue ? "是" : "否";
         }
@@ -156,7 +171,6 @@ namespace Inotify.Sends
                 .SelectMany(e => e.GetCustomAttributes(typeof(InputTypeAttribte), false))
                 .Cast<InputTypeAttribte>()
                 .Select(e => e.InputTypeData)
-                .Where(e=>e.Visuable)
                 .ToList();
 
             var sendMethodKeyAttribute = this.GetType().GetCustomAttribute<SendMethodKeyAttribute>();
@@ -168,6 +182,7 @@ namespace Inotify.Sends
                     Name = sendMethodKeyAttribute.Name,
                     Type = sendMethodKeyAttribute.Name,
                     Key = sendMethodKeyAttribute.Key,
+                    Warning = sendMethodKeyAttribute.Waring,
                     Values = values
                 };
             }

@@ -70,7 +70,7 @@ namespace Inotify.Controllers
             {
                 code = 200,
                 message = "sucess",
-                timestamp = (DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds
+                timestamp = (int)(DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds
             });
         }
 
@@ -81,7 +81,17 @@ namespace Inotify.Controllers
                 code = 200,
                 message = "sucess",
                 data = obj ?? "",
-                timestamp = (DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds
+                timestamp = (int)(DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds
+            });
+        }
+
+        protected JsonResult Me(string message)
+        {
+            return Json(new
+            {
+                code = 200,
+                message = message,
+                timestamp = (int)(DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds
             });
         }
 
@@ -91,7 +101,7 @@ namespace Inotify.Controllers
             {
                 code = 404,
                 message = "failed",
-                timestamp = (DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds
+                timestamp = (int)(DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds
             });
         }
 
@@ -99,9 +109,9 @@ namespace Inotify.Controllers
         {
             return Json(new
             {
-                code,
+                code= code,
                 message = "failed",
-                timestamp = (DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds
+                timestamp = (int)(DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds
             });
         }
 
@@ -109,9 +119,9 @@ namespace Inotify.Controllers
         {
             return new JsonResult(new
             {
-                code,
-                message,
-                timestamp = (DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds
+                code=code,
+                message=message,
+                timestamp = (int)(DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds
             });
         }
 

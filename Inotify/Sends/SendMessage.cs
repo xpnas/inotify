@@ -9,5 +9,6 @@ namespace Inotify.Sends
         public string Token;
         public string Title;
         public string? Data;
+        public string? Key;
     }
 }

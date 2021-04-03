@@ -36,6 +36,17 @@
                     <el-switch active-color='#13ce66' v-model='settingForm.githubEnable' inactive-color='#ff4949'></el-switch>
                 </template>
             </el-form-item>
+
+            <el-divider content-position="left">BARK授权</el-divider>
+            <el-form-item label="KeyID">
+                <el-input v-model="settingForm.barkKeyId" placeholder="KeyID">></el-input>
+            </el-form-item>
+            <el-form-item label="TempID">
+                <el-input v-model="settingForm.barkTeamId" placeholder="TempID"></el-input>
+            </el-form-item>
+            <el-form-item label="P8Key">
+                <el-input  type="textarea" v-model="settingForm.barkPrivateKey" placeholder="P8Key"></el-input>
+            </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="submitForm('settingForm')">确认修改</el-button>
             </el-form-item>

@@ -7,7 +7,7 @@ function resolve(dir) {
 }
 
 const name = defaultSettings.title || 'Inotify'
-const port = process.env.port || process.env.npm_config_port || 9528
+const port = process.env.port || process.env.npm_config_port || 9000
 
 const axiosV = require('axios/package.json').version
 const echartsV = require('echarts/package.json').version
@@ -43,7 +43,8 @@ const cdn = {
     `https://cdn.bootcdn.net/ajax/libs/vue-router/${routerV}/vue-router.min.js`,
     `https://cdn.bootcdn.net/ajax/libs/element-ui/${elementV}/locale/zh-CN.js`,
     `https://cdn.bootcdn.net/ajax/libs/js-cookie/${cookieV}/js.cookie.min.js`,
-    `https://cdn.bootcdn.net/ajax/libs/nprogress/${nprogressV}/nprogress.min.js`
+    `https://cdn.bootcdn.net/ajax/libs/nprogress/${nprogressV}/nprogress.min.js`,
+    `https://cdn.bootcdn.net/ajax/libs/qrcodejs/1.0.0/qrcode.js`
   ]
 }
 

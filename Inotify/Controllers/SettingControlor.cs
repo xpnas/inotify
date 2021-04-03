@@ -39,6 +39,7 @@ namespace Inotify.Controllers
             var userInfo = DBManager.Instance.GetUser(UserName);
             if (userInfo != null)
             {
+                var barkTemplateAttribute = typeof(BarkSendTemplate).GetCustomAttributes(typeof(SendMethodKeyAttribute), false).OfType<SendMethodKeyAttribute>().First();
                 var sendAuthInfos = DBManager.Instance.DBase.Query<SendAuthInfo>().Where(e => e.UserId == userInfo.Id).ToArray();
                 var userSendTemplates = new List<InputTemeplate>();
                 foreach (var sendAuthInfo in sendAuthInfos)
@@ -52,6 +53,10 @@ namespace Inotify.Controllers
                         sendTemplate.IsActive = sendAuthInfo.Active;
                         sendTemplate.AuthToTemplate(sendAuthInfo.AuthData);
                         userSendTemplates.Add(sendTemplate);
+                    }
+                    if (barkTemplateAttribute.Key == sendTemplate.Key)
+                    {
+                        sendTemplate.Values.FirstOrDefault(e => e.Name == nameof(BarkSendTemplate.Auth.SendUrl)).Value = "";
                     }
                 }
 
@@ -100,10 +105,9 @@ namespace Inotify.Controllers
             if (userInfo != null && inputTemeplate.Key != null && inputTemeplate.Name != null)
             {
                 var barkKey = typeof(BarkSendTemplate).GetCustomAttributes(typeof(SendMethodKeyAttribute), false).OfType<SendMethodKeyAttribute>().First().Key;
-                if (barkKey == inputTemeplate.Key
-                    && DBManager.Instance.DBase.Query<SendAuthInfo>().FirstOrDefault(e => e.UserId == userInfo.Id && e.SendMethodTemplate == barkKey) != null)
+                if (barkKey == inputTemeplate.Key)
                 {
-                    return Fail(406, "您只能添加一个BARK通道");
+                    return Fail(406, "BARK通道勿手动添加，请使用APP添加BARK地址绑定");
                 }
                 else
                 {
@@ -131,6 +135,7 @@ namespace Inotify.Controllers
             var userInfo = DBManager.Instance.GetUser(UserName);
             if (userInfo != null)
             {
+                var barkTemplateAttribute = typeof(BarkSendTemplate).GetCustomAttributes(typeof(SendMethodKeyAttribute), false).OfType<SendMethodKeyAttribute>().First();
                 var oldSendInfo = DBManager.Instance.DBase.Query<SendAuthInfo>().FirstOrDefault(e => e.Id == inputTemeplate.SendAuthId);
                 if (oldSendInfo != null && inputTemeplate.Name != null)
                 {

@@ -26,7 +26,7 @@ namespace Inotify.ThridOauth.Service
         private readonly string _authorizeUrl;
 
 
-        public GitHubLogin(IHttpContextAccessor contextAccessor, IOptions<GitHubCredential> options) : base(
+        public GitHubLogin(IHttpContextAccessor contextAccessor) : base(
             contextAccessor)
         {
             Credential = new CredentialSetting()

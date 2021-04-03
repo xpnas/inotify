@@ -9,6 +9,8 @@ namespace Inotify.Common
 {
     public static class Extensions
     {
+        static int rep = 0;
+
         /// <summary>
         /// MD5加密字符串（32位大写）
         /// </summary>
@@ -30,6 +32,7 @@ namespace Inotify.Common
 
         public static string Base64Encode(this string source)
         {
+            if (string.IsNullOrEmpty(source)) return "";
             byte[] bytes = (Encoding.UTF8.GetBytes(source));
             return Convert.ToBase64String(bytes);
 
@@ -37,8 +40,32 @@ namespace Inotify.Common
 
         public static string Base64Decode(this string source)
         {
+            if (string.IsNullOrEmpty(source)) return "";
             var bytes = Convert.FromBase64String(source);
             return System.Text.Encoding.Default.GetString(bytes);
+        }
+
+        public static string GenerateCheckCode(this int codeCount)
+        {
+            string str = string.Empty;
+            long num2 = DateTime.Now.Ticks + rep;
+            rep++;
+            Random random = new Random(((int)(((ulong)num2) & 0xffffffffL)) | ((int)(num2 >> rep)));
+            for (int i = 0; i < codeCount; i++)
+            {
+                char ch;
+                int num = random.Next();
+                if ((num % 2) == 0)
+                {
+                    ch = (char)(0x30 + ((ushort)(num % 10)));
+                }
+                else
+                {
+                    ch = (char)(0x41 + ((ushort)(num % 0x1a)));
+                }
+                str += ch.ToString();
+            }
+            return str;
         }
     }
 }

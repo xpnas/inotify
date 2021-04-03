@@ -12,7 +12,7 @@
                 <el-input v-model="selectTemplate.name"></el-input>
             </el-form-item>
             <el-form-item v-for="(item) in selectTemplate.values" :label="item.description" :key="item.name" required>
-                <el-input v-model="item.value" :placeholder="item.default"></el-input>
+                <el-input v-model="item.value" :placeholder="item.default" :readonly="item.readonly"></el-input>
             </el-form-item>
         </el-form>
 
@@ -71,6 +71,7 @@ import {
     getSendTemplates,
     addAuthInfo,
     deepClone,
+    getSendKey
 
 } from '@/api/setting'
 
@@ -102,7 +103,7 @@ export default {
             isModify: false,
             authform: {},
             title: "设置",
-
+            sendKey: ""
         }
     },
     created() {
@@ -117,14 +118,23 @@ export default {
             })
             getSendTemplates().then((response) => {
                 if (response.code == 200) {
-
                     this.sendTemplates = response.data;
+                }
+            })
+            getSendKey().then(response => {
+                if (response.code == 200) {
+                    this.sendKey = response.data;
                 }
             })
         },
         selectTemplateChange(selectTemplate) {
-
-            this.selectTemplate = deepClone(selectTemplate);
+            this.selectTemplate = deepClone(selectTemplate)
+            if (this.selectTemplate.warning) {
+                this.$message({
+                    message: this.selectTemplate.warning,
+                    type: 'warning'
+                })
+            }
         },
         submitForm(formName) {
             this.$refs[formName].validate((valid) => {
@@ -181,8 +191,23 @@ export default {
             this.title = '修改设置'
             this.isModify = true;
             this.selectTemplate = deepClone(row);
-            this.dialogVisible = true;
+            if (this.selectTemplate.type == "Bark") {
+                let wPath = window.document.location.href;
+                let pathName = this.$route.path;
+                let pos = wPath.indexOf(pathName);
+                let localhostPath = wPath.substring(0, pos);
+                localhostPath = localhostPath.replace("#", "");
 
+                var devieItem = this.selectTemplate.values.find(item => {
+                    return item.name == "DeviceKey"
+                })
+                var sendUrlItem = this.selectTemplate.values.find(item => {
+                    return item.name == "SendUrl"
+                });
+                sendUrlItem.value = localhostPath + "?act=" + this.sendKey + "/" + devieItem.value + "/{title}/{data}"
+            }
+
+            this.dialogVisible = true;
         },
         deleteAuth(index, row) {
             deleteAuthInfo(row.sendAuthId).then((response) => {
@@ -213,24 +238,25 @@ export default {
     }
 }
 </script>
-<style lang="scss">
 
+<style lang="scss">
 @media screen and (min-width:800px) {
     .el-dialog__wrapper .el-dialog {
         width: 800px !important;
     }
+
     .el-dialog__wrapper .el-dialog .el-dialog__body {
         overflow: auto
     }
 }
 
-@media screen and  (max-width: 800px) {
+@media screen and (max-width: 800px) {
     .el-dialog__wrapper .el-dialog {
         width: 99% !important;
     }
+
     .el-dialog__wrapper .el-dialog .el-dialog__body {
         overflow: auto
     }
 }
-
 </style>

@@ -37,7 +37,6 @@ namespace Inotify.Sends
 
         private readonly Dictionary<string, Type> m_sendMethodTemplateTypes;
 
-
         private SendTaskManager()
         {
             m_sendMessages = new BlockingCollection<SendMessage>();
@@ -69,7 +68,6 @@ namespace Inotify.Sends
             };
             m_analyseThread.Start();
         }
-
 
         public EventHandler<SendMessage> OnMessageAdd;
 
@@ -152,7 +150,7 @@ namespace Inotify.Sends
                 try
                 {
                     var message = m_sendMessages.Take();
-                    DBManager.Instance.GetAuth(message.Token, out SendAuthInfo[] sendAuthInfos);
+                    DBManager.Instance.GetSendAuthInfos(message.Token, message.Key, out SendAuthInfo[] sendAuthInfos);
                     foreach (var authInfo in sendAuthInfos)
                     {
                         var authData = authInfo.AuthData;
@@ -212,7 +210,7 @@ namespace Inotify.Sends
             {
                 var message = m_analyseMessages.Take();
                 var date = DateTime.Now.ToString("yyyyMMdd");
-                var authData = DBManager.Instance.GetAuth(message.Token, out string temeplateId);
+                var authData = DBManager.Instance.GetSendAuthInfo(message.Token, out string temeplateId);
 
                 if (temeplateId != null)
                 {

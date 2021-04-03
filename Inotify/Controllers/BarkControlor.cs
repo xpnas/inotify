@@ -1,4 +1,5 @@
-﻿using Inotify.Data;
+﻿using Inotify.Common;
+using Inotify.Data;
 using Inotify.Data.Models;
 using Inotify.Sends;
 using Inotify.Sends.Products;
@@ -13,106 +14,115 @@ using System.Threading.Tasks;
 namespace Inotify.Controllers
 {
 
-	public class DeviceInfo
-	{
-		public string? Token { get; set; }
-
-		public string? Key { get; set; }
-
-		public string? DeviceToken { get; set; }
-
-		public string? Device_key { get; set; }
-
-		public string? Device_token { get; set; }
-	}
-
 	[ApiController]
 	[Route("/")]
 	public class BarkControlor : BaseControlor
 	{
 		[HttpGet, Route("Ping")]
-		public JsonResult Ping(string? token)
+		public JsonResult Ping()
 		{
-			return OK();
+			return Me("pong");
 		}
 
 		[HttpGet, Route("Info")]
-		public JsonResult Info(string? token)
+		public JsonResult Info()
 		{
+			var dateTime = System.IO.File.GetLastWriteTime(this.GetType().Assembly.Location);
+			var devices = DBManager.Instance.DBase.Query<SendAuthInfo>().Count();
 			return Json(new
 			{
-				version = "v2",
-				build = "2021.03.29",
+				version = "v2.0.1",
+				build = dateTime.ToString("yyyy-MM-dd HH:mm:ss"),
 				arch = RuntimeInformation.OSDescription,
-				commit = "inotfy",
-				devices = RuntimeInformation.OSDescription
+				commit = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(),
+				devices
 			});
-
 		}
 
 		[HttpGet, Route("Healthz")]
 
-		public string Healthz(string? token)
+		public string Healthz()
 		{
 			return "ok";
 		}
 
+		[HttpGet, Route("Register")]
+		public JsonResult Register(string? act, string? key, string? devicetoken, string? device_key) => !string.IsNullOrEmpty(device_key) ?
+			Register(device_key) : Register(act, key, devicetoken);
+
 		[HttpPost, Route("Register")]
-		public JsonResult Register(DeviceInfo deviceInfo)
+		public JsonResult Register(string? act, string? device_key, string? device_token)
 		{
-			if (!string.IsNullOrEmpty(deviceInfo.Key))
-				deviceInfo.Device_key = deviceInfo.Key;
+			if (string.IsNullOrEmpty(act))
+				return Fail(400, "request bind failed : act is empty");
 
-			if (!string.IsNullOrEmpty(deviceInfo.DeviceToken))
-				deviceInfo.Device_token = deviceInfo.DeviceToken;
+			if (string.IsNullOrEmpty(device_token))
+				return Fail(400, "request bind failed : device_token is empty");
 
-			if (string.IsNullOrEmpty(deviceInfo.Device_key))
-				return Fail(400, "request bind failed : device_key is empty");
-
-			if (string.IsNullOrEmpty(deviceInfo.Device_token))
-				return Fail(400, "request bind failed : device_token not empty");
-
-			var userInfo = DBManager.Instance.DBase.Query<SendUserInfo>().FirstOrDefault(e => e.Token == deviceInfo.Token);
+			var userInfo = DBManager.Instance.DBase.Query<SendUserInfo>().FirstOrDefault(e => e.Token == act);
 			if (userInfo == null)
 			{
-				return Fail(400, "request bind failed : device not registered");
+				return Fail(400, "request bind failed : act is not registered");
 			}
 			else
 			{
-
-				var barkAuth = new BarkAuth() { DeviceToken = deviceInfo.Device_token };
+				BarkAuth barkAuth = null;
+				SendAuthInfo barkSendAuthInfo = null;
 				var barkTemplateAttribute = typeof(BarkSendTemplate).GetCustomAttributes(typeof(SendMethodKeyAttribute), false).OfType<SendMethodKeyAttribute>().First();
-				var barkSendAuthInfo = DBManager.Instance.DBase.Query<SendAuthInfo>().FirstOrDefault(e => e.UserId == userInfo.Id && e.SendMethodTemplate == barkTemplateAttribute.Key);
+
+				if (!string.IsNullOrEmpty(device_key))
+				{
+					barkSendAuthInfo = DBManager.Instance.DBase.Query<SendAuthInfo>().FirstOrDefault(e => e.Key == device_key);
+					if (barkSendAuthInfo != null)
+					{
+						barkAuth = JsonConvert.DeserializeObject<BarkAuth>(barkSendAuthInfo.AuthData);
+						barkAuth.DeviceToken = device_token;
+						barkSendAuthInfo.AuthData = JsonConvert.SerializeObject(barkAuth);
+						barkSendAuthInfo.ModifyTime = DateTime.Now;
+						DBManager.Instance.DBase.Update(barkSendAuthInfo);
+					}
+				}
+
 				if (barkSendAuthInfo == null)
 				{
+					device_key = 16.GenerateCheckCode();
+					barkAuth = new BarkAuth() { DeviceKey = device_key, DeviceToken = device_token, IsArchive = "1", AutoMaticallyCopy = "1", Sound = "1107" };
 					barkSendAuthInfo = new SendAuthInfo()
 					{
 						Name = barkTemplateAttribute.Name,
 						SendMethodTemplate = barkTemplateAttribute.Key,
+						Key = device_key,
 						AuthData = JsonConvert.SerializeObject(barkAuth),
 						UserId = userInfo.Id,
 						CreateTime = DateTime.Now,
-						ModifyTime = DateTime.Now
+						ModifyTime = DateTime.Now,
+						Active = true,
 					};
-
-					var sendAuthId = Convert.ToInt32(DBManager.Instance.DBase.Insert<SendAuthInfo>(barkSendAuthInfo));
-					userInfo.SendAuthId = sendAuthId;
-					DBManager.Instance.DBase.Update(userInfo, e => e.SendAuthId);
-				}
-				else
-				{
-					barkSendAuthInfo.AuthData = JsonConvert.SerializeObject(barkAuth);
-					barkSendAuthInfo.ModifyTime = DateTime.Now;
-					DBManager.Instance.DBase.Update(barkSendAuthInfo);
+					DBManager.Instance.DBase.Insert(barkSendAuthInfo);
 				}
 
 				return Json(new
 				{
-					key = deviceInfo.Device_key,
-					device_key = deviceInfo.Device_key,
-					device_token = deviceInfo.Device_token
+					key = device_key,
+					device_key = device_key,
+					device_token = device_token
 				});
 			}
+		}
+
+		[HttpGet, Route("RegisterCheck")]
+		public JsonResult Register(string device_key)
+		{
+			if (string.IsNullOrEmpty(device_key))
+			{
+				return Fail(400, "device key is empty");
+			}
+			if (!DBManager.Instance.DBase.Query<SendAuthInfo>().Any(e => e.Key == device_key))
+			{
+				return Fail(400, "device not registered");
+			}
+
+			return OK();
 		}
 	}
 }
