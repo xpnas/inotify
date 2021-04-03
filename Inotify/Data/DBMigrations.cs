@@ -61,6 +61,7 @@ namespace Inotify.Data
         {
             //V2版本允许多通道,激活标记放入SendAuthInfo表中，增加Active列，同时更新原有用户的激活通道
             Migrator.AlterTable<SendAuthInfo>().AddColumn(e => e.Active).Execute();
+            Migrator.AlterTable<SendAuthInfo>().AddColumn(e => e.Key).Execute();
             Migrator.Database.UpdateMany<SendAuthInfo>().OnlyFields(e => e.Active).Execute(new SendAuthInfo() { Active = false });
             var activeUsers = Migrator.Database.Query<SendUserInfo>().ToList();
             activeUsers.ForEach(user =>
@@ -69,7 +70,7 @@ namespace Inotify.Data
                 if (sendUserInfo != null)
                 {
                     sendUserInfo.Active = true;
-                    Migrator.Database.Update(sendUserInfo, e => e.Active); ;
+                    Migrator.Database.Update(sendUserInfo, e => e.Active);
                 }
             });
         }
@@ -79,9 +80,7 @@ namespace Inotify.Data
     {
         protected override void execute()
         {
-            //V2001版本增加SendInfo的key字段
-            Migrator.AlterTable<SendAuthInfo>().AddColumn(e => e.Key).Execute();
-
+    
             //对AuthInfo的AuthDate字段进行加密
             var sendAuthInfos = Migrator.Database.Query<SendAuthInfo>().ToList();
             sendAuthInfos.ForEach(sendAuthInfo =>
