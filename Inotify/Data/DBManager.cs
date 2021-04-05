@@ -1,9 +1,6 @@
-﻿using Inotify.Common;
-using Inotify.Data.Models;
+﻿using Inotify.Data.Models;
 using Inotify.Data.Models.System;
-using Inotify.Sends.Products;
 using Microsoft.Data.Sqlite;
-using Microsoft.IdentityModel;
 using Newtonsoft.Json;
 using NPoco;
 using NPoco.Migrations;
@@ -11,9 +8,7 @@ using NPoco.Migrations.CurrentVersion;
 using System;
 using System.Data;
 using System.IO;
-using System.Net.Mail;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography;
 
 namespace Inotify.Data
 {
@@ -35,7 +30,7 @@ namespace Inotify.Data
 
         public JwtInfo JWT
         {
-            get { return m_JWT; }
+            get => m_JWT;
             set
             {
                 m_JWT = value;
@@ -53,7 +48,11 @@ namespace Inotify.Data
         {
             get
             {
-                if (m_Instance == null) m_Instance = new DBManager();
+                if (m_Instance == null)
+                {
+                    m_Instance = new DBManager();
+                }
+
                 return m_Instance;
             }
         }
@@ -64,7 +63,10 @@ namespace Inotify.Data
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                 Inotify_Data = Path.Combine(Directory.GetCurrentDirectory(), m_dataPath);
-                if (!Directory.Exists(Inotify_Data)) Directory.CreateDirectory(Inotify_Data);
+                if (!Directory.Exists(Inotify_Data))
+                {
+                    Directory.CreateDirectory(Inotify_Data);
+                }
 
                 m_jwtPath = Path.Combine(Directory.GetCurrentDirectory(), "/" + m_dataPath + "/jwt.json");
                 m_dbPath = Path.Combine(Directory.GetCurrentDirectory(), "/" + m_dataPath + "/data.db");
@@ -74,7 +76,10 @@ namespace Inotify.Data
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 Inotify_Data = Path.Combine(Directory.GetCurrentDirectory(), m_dataPath);
-                if (!Directory.Exists(Inotify_Data)) Directory.CreateDirectory(Inotify_Data);
+                if (!Directory.Exists(Inotify_Data))
+                {
+                    Directory.CreateDirectory(Inotify_Data);
+                }
 
                 m_jwtPath = Path.Combine(Directory.GetCurrentDirectory(), m_dataPath + "/jwt.json");
                 m_dbPath = Path.Combine(Directory.GetCurrentDirectory(), m_dataPath + "/data.db");
@@ -107,20 +112,24 @@ namespace Inotify.Data
             m_dbConnection = new SqliteConnection(string.Format("Data Source={0}", m_dbPath));
 
             if (m_dbConnection.State == ConnectionState.Closed)
+            {
                 m_dbConnection.Open();
+            }
 
-            DBase = new Database(m_dbConnection, DatabaseType.SQLite);
-            DBase.KeepConnectionAlive = true;
+            DBase = new Database(m_dbConnection, DatabaseType.SQLite)
+            {
+                KeepConnectionAlive = true
+            };
             m_migrator = new Migrator(DBase);
         }
 
-        public bool IsToken(string token,out bool hasActive)
+        public bool IsToken(string token, out bool hasActive)
         {
             hasActive = false;
-            var userInfo= DBase.Query<SendUserInfo>().FirstOrDefault(e => e.Token == token);
+            var userInfo = DBase.Query<SendUserInfo>().FirstOrDefault(e => e.Token == token);
             if (userInfo != null)
             {
-                hasActive= DBase.Query<SendAuthInfo>().Any(e => e.UserId== userInfo.Id && e.Active);
+                hasActive = DBase.Query<SendAuthInfo>().Any(e => e.UserId == userInfo.Id && e.Active);
                 return true;
             }
 
@@ -154,11 +163,16 @@ namespace Inotify.Data
             guid = string.Empty;
             var upToekn = token.ToUpper();
             var userInfo = DBManager.Instance.DBase.Query<SendUserInfo>().FirstOrDefault(e => e.Token == upToekn && e.Active);
-            if (userInfo == null) return null;
+            if (userInfo == null)
+            {
+                return null;
+            }
 
             var authInfo = DBManager.Instance.DBase.Query<SendAuthInfo>().FirstOrDefault(e => e.Id == userInfo.SendAuthId && e.UserId == userInfo.Id);
             if (authInfo == null)
+            {
                 return null;
+            }
 
             guid = authInfo.SendMethodTemplate;
             return authInfo.AuthData;
@@ -177,7 +191,7 @@ namespace Inotify.Data
                 }
                 else
                 {
-                    sendAuthInfos = DBManager.Instance.DBase.Query<SendAuthInfo>().Where(e => e.UserId == userInfo.Id && e.Active &&e.Key==key).ToArray();
+                    sendAuthInfos = DBManager.Instance.DBase.Query<SendAuthInfo>().Where(e => e.UserId == userInfo.Id && e.Active && e.Key == key).ToArray();
                 }
             }
 

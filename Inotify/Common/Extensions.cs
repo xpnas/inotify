@@ -1,21 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Inotify.Common
 {
     public static class Extensions
     {
-        static int rep = 0;
+        private static int rep = 0;
 
-        /// <summary>
-        /// MD5加密字符串（32位大写）
-        /// </summary>
-        /// <param name="source">源字符串</param>
-        /// <returns>加密后的字符串</returns>
         public static string ToMd5(this string source)
         {
             MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
@@ -32,7 +24,11 @@ namespace Inotify.Common
 
         public static string Base64Encode(this string source)
         {
-            if (string.IsNullOrEmpty(source)) return "";
+            if (string.IsNullOrEmpty(source))
+            {
+                return "";
+            }
+
             byte[] bytes = (Encoding.UTF8.GetBytes(source));
             return Convert.ToBase64String(bytes);
 
@@ -40,7 +36,11 @@ namespace Inotify.Common
 
         public static string Base64Decode(this string source)
         {
-            if (string.IsNullOrEmpty(source)) return "";
+            if (string.IsNullOrEmpty(source))
+            {
+                return "";
+            }
+
             var bytes = Convert.FromBase64String(source);
             return System.Text.Encoding.Default.GetString(bytes);
         }
@@ -66,6 +66,18 @@ namespace Inotify.Common
                 str += ch.ToString();
             }
             return str;
+        }
+
+        public static long ToUTC(this DateTime time)
+        {
+            TimeSpan ts = time - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            return Convert.ToInt64(ts.TotalMilliseconds);
+        }
+
+        public static long ToUnix(this DateTime time)
+        {
+            var expiration = time.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            return (long)expiration.TotalSeconds;
         }
     }
 }

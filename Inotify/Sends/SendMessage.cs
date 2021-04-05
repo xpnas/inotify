@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Inotify.Sends
+﻿namespace Inotify.Sends
 {
     public class SendMessage
     {

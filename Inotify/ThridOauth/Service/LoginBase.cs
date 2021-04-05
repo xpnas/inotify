@@ -1,6 +1,5 @@
 ﻿using Inotify.Sends;
 using Inotify.ThridOauth.Entity;
-using Inotify.ThridOauth.Service;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Net;

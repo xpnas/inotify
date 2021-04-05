@@ -2,14 +2,10 @@ using Inotify.Sends;
 using Inotify.ThridOauth.Common;
 using Inotify.ThridOauth.Entity;
 using Inotify.ThridOauth.IService;
-using Inotify.ThridOauth.Service;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Net.Http;
 
 
@@ -56,11 +52,14 @@ namespace Inotify.ThridOauth.Service
                     var token = GetAccessToken(code, ref errorMsg);
 
                     if (!string.IsNullOrEmpty(errorMsg))
+                    {
                         return new AuthorizeResult
                         {
                             Code = Code.UserInfoErrorMsg,
                             Error = errorMsg
                         };
+                    }
+
                     var accessToken = token.Value<string>("access_token");
 
                     var user = UserInfo(accessToken, ref errorMsg);
@@ -140,11 +139,17 @@ namespace Inotify.ThridOauth.Service
             {
                 startindex = sourse.IndexOf(startstr, StringComparison.Ordinal);
                 if (startindex == -1)
+                {
                     return result;
+                }
+
                 string tmpstr = sourse[(startindex + startstr.Length)..];
                 endindex = tmpstr.IndexOf(endstr, StringComparison.Ordinal);
                 if (endindex == -1)
+                {
                     return result;
+                }
+
                 result = tmpstr.Remove(endindex);
             }
             catch (Exception ex)

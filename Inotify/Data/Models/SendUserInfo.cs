@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Inotify.Data.Models
+﻿namespace Inotify.Data.Models
 {
     [NPoco.TableName("userInfo")]
     [NPoco.PrimaryKey("id")]

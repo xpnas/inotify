@@ -5,22 +5,16 @@ using Inotify.Sends;
 using Inotify.ThridOauth.Common;
 using Inotify.ThridOauth.IService;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
-using NPoco;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Inotify.Controllers
 {
@@ -47,7 +41,10 @@ namespace Inotify.Controllers
             if (userInfo != null)
             {
                 if (!userInfo.Active)
+                {
                     return Fail(401, "用户被禁用");
+                }
+
                 if (userInfo.Password == password.ToMd5())
                 {
                     var token = GenToken(username);
@@ -97,13 +94,19 @@ namespace Inotify.Controllers
                         string? avtar = null;
                         string email = "";
                         if (res.Result.TryGetValue("login", out JToken? jToken))
+                        {
                             githubUserName = jToken.ToString();
+                        }
 
                         if (res.Result.TryGetValue("avatar_url", out jToken))
+                        {
                             avtar = jToken.ToString();
+                        }
 
                         if (res.Result.TryGetValue("email", out jToken))
+                        {
                             email = jToken.ToString();
+                        }
 
                         if (githubUserName != null && avtar != null)
                         {
@@ -114,7 +117,9 @@ namespace Inotify.Controllers
                                 user.Avatar = avtar;
                                 DBManager.Instance.DBase.Update(user);
                                 if (!user.Active)
+                                {
                                     return Fail(401, "用户被禁用");
+                                }
                             }
                             else
                             {

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Inotify.Data.Models
+﻿namespace Inotify.Data.Models
 {
     [NPoco.TableName("sendInfo")]
     [NPoco.PrimaryKey(new string[] { "templateID", "date" }, AutoIncrement = false)]

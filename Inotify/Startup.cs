@@ -2,7 +2,6 @@ using Inotify.Controllers;
 using Inotify.Data;
 using Inotify.Sends;
 using Inotify.ThridOauth;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -13,11 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using NPoco;
 using System;
-using System.Net;
-using System.Net.Http;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.RegularExpressions;
@@ -132,7 +127,7 @@ namespace Inotify
                                 rewriteContext.HttpContext.Request.Path = @"/api/send";
                                 rewriteContext.HttpContext.Request.QueryString = new QueryString($"?token={groups[1]}&key={groups[2]}");
                             }
-                            else if(rewriteContext.HttpContext.Request.QueryString.Value.StartsWith("?"))
+                            else if (rewriteContext.HttpContext.Request.QueryString.Value.StartsWith("?"))
                             {
                                 rewriteContext.HttpContext.Request.Path = @"/info";
                                 rewriteContext.HttpContext.Request.QueryString = new QueryString();

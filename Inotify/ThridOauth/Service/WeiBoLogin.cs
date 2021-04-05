@@ -1,7 +1,6 @@
 ﻿using Inotify.ThridOauth.Common;
 using Inotify.ThridOauth.Entity;
 using Inotify.ThridOauth.IService;
-using Inotify.ThridOauth.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
@@ -53,7 +52,10 @@ namespace Inotify.ThridOauth.Service
                     var token = GetAccessToken(code, ref errorMsg);
 
                     if (!string.IsNullOrEmpty(errorMsg))
+                    {
                         return new AuthorizeResult { Code = Code.UserInfoErrorMsg, Error = errorMsg };
+                    }
+
                     var accessToken = token.Value<string>("access_token");
 
                     var uid = token.Value<string>("uid");

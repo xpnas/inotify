@@ -1,5 +1,5 @@
-﻿using System;
-using Inotify.Common;
+﻿using Inotify.Common;
+using System;
 namespace Inotify.Data.Models
 {
     [NPoco.TableName("sendAuthInfo")]
@@ -24,14 +24,8 @@ namespace Inotify.Data.Models
         [NPoco.Ignore]
         public string AuthData
         {
-            get
-            {
-                return AuthDataSave.Base64Decode();
-            }
-            set
-            {
-                AuthDataSave = value.Base64Encode();
-            }
+            get => AuthDataSave.Base64Decode();
+            set => AuthDataSave = value.Base64Encode();
         }
 
         [NPoco.Column("modifyTime")]

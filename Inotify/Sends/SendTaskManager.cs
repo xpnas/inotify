@@ -1,15 +1,10 @@
-﻿using Inotify;
-using Inotify.Data;
+﻿using Inotify.Data;
 using Inotify.Data.Models;
-using Inotify.Sends;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading;
 
 
@@ -22,7 +17,11 @@ namespace Inotify.Sends
         {
             get
             {
-                if (m_Instance == null) m_Instance = new SendTaskManager();
+                if (m_Instance == null)
+                {
+                    m_Instance = new SendTaskManager();
+                }
+
                 return m_Instance;
             }
         }
@@ -47,7 +46,7 @@ namespace Inotify.Sends
             var sendMethodTemplates = Assembly.GetExecutingAssembly()
                 .GetTypes()
                 .Where(e => e.GetCustomAttribute<SendMethodKeyAttribute>() != null)
-                .OrderBy(e => e.GetCustomAttribute<SendMethodKeyAttribute>().Order)
+                .OrderBy(e => e.GetCustomAttribute<SendMethodKeyAttribute>().Order.ToString())
                 .ToList();
 
             sendMethodTemplates.ForEach(sendMethodTemplate =>
@@ -105,7 +104,9 @@ namespace Inotify.Sends
         public bool SendMessage(SendMessage message)
         {
             if (m_sendMessages.Count > 10000)
+            {
                 return false;
+            }
 
             m_sendMessages.Add(message);
 
@@ -124,7 +125,9 @@ namespace Inotify.Sends
                 if (getTemeplateMethod != null)
                 {
                     if (getTemeplateMethod.Invoke(obj, null) is InputTemeplate temeplate && temeplate.Key != null)
+                    {
                         sendTemplates.Add(temeplate.Key, temeplate);
+                    }
                 }
             }
             return sendTemplates;

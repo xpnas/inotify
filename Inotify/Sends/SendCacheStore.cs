@@ -1,13 +1,9 @@
-﻿using Inotify;
-using Inotify.Data;
+﻿using Inotify.Data;
 using Inotify.Data.Models;
-using Inotify.Sends;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Caching;
-using System.Text;
-using System.Web;
 
 namespace Inotify.Sends
 {
@@ -27,7 +23,10 @@ namespace Inotify.Sends
         {
             object obj = m_cache.Get(key);
             if (obj != null && obj is string)
+            {
                 return obj as string;
+            }
+
             return null;
 
         }
@@ -40,7 +39,10 @@ namespace Inotify.Sends
         public static string GetSystemValue(string key)
         {
             if (m_systemInfos.ContainsKey(key))
+            {
                 return m_systemInfos[key];
+            }
+
             return "";
 
         }

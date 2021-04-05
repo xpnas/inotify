@@ -1,19 +1,10 @@
-﻿using Inotify.Common;
-using Inotify.Data;
-using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Runtime.InteropServices;
 using System.Security.Cryptography;
-using System.Security.Policy;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Inotify.Sends.Products
 {
@@ -41,7 +32,7 @@ namespace Inotify.Sends.Products
 
     }
 
-    [SendMethodKey("3B6DE04D-A9EF-4C91-A151-60B7425C5AB2", "Bark", Order = 6, Waring = "BARK通道勿手动添加，请使用APP添加BARK地址绑定")]
+    [SendMethodKey("3B6DE04D-A9EF-4C91-A151-60B7425C5AB2", "Bark", Order = 2999, Waring = "BARK通道勿手动添加，请使用APP添加BARK地址绑定")]
     public class BarkSendTemplate : SendTemplate<BarkAuth>
     {
         private static string KeyID;
@@ -49,8 +40,6 @@ namespace Inotify.Sends.Products
         private static string TeamID;
 
         private static CngKey SecretKey;
-
-        public override BarkAuth Auth { get; set; }
 
         public override bool SendMessage(SendMessage message)
         {
@@ -65,7 +54,9 @@ namespace Inotify.Sends.Products
             }
 
             if (Auth.DeviceToken == null)
+            {
                 return false;
+            }
 
             var payload = CreatePayload(message);
             var accessToken = CreateAccessToken(payload);
@@ -82,9 +73,14 @@ namespace Inotify.Sends.Products
 
             var alert = new Dictionary<string, object>();
             if (!string.IsNullOrEmpty(message.Data))
+            {
                 alert.Add("body", message.Data);
+            }
+
             if (!string.IsNullOrEmpty(message.Title))
+            {
                 alert.Add("title", message.Title);
+            }
 
             var aps = new Dictionary<string, object>
             {
@@ -105,7 +101,9 @@ namespace Inotify.Sends.Products
             };
 
             if (!string.IsNullOrEmpty(message.Title))
+            {
                 payload.Add("copy", message.Title);
+            }
 
             var payloadString = JObject.FromObject(payload).ToString();
 
@@ -164,7 +162,9 @@ namespace Inotify.Sends.Products
                         return true;
                     }
                     else
+                    {
                         return false;
+                    }
                 }
                 else
                 {

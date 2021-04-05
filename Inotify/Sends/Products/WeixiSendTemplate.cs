@@ -1,9 +1,6 @@
-﻿using Inotify.Common;
-using Inotify.Sends;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -30,64 +27,34 @@ namespace Inotify.Sends.Products
     [SendMethodKey("409A30D5-ABE8-4A28-BADD-D04B9908D763", "企业微信", Order = 0)]
     public class WeixiSendTemplate : SendTemplate<WeixiAuth>
     {
-        public override WeixiAuth Auth { get; set; }
-
         public override bool SendMessage(SendMessage message)
         {
-            if (Auth == null) return false;
-
-            var token = GetAccessToken();
-            if (token == null) return false;
-
-            return PostMail(token, message.Title, message.Data);
-        }
-
-        /// 获取AccessToken
-        /// </summary>
-        /// <returns></returns>
-        private string GetAccessToken()
-        {
-            var key = Auth.Corpid + Auth.AgentID + Auth.Corpsecret;
-            var toekn = SendCacheStore.Get(key);
-            if (toekn == null)
+            if (Auth == null)
             {
-                var url = string.Format(@"https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid={0}&corpsecret={1}", Auth.Corpid, Auth.Corpsecret);
-
-                WebRequest request = WebRequest.Create(url);
-                request.Credentials = CredentialCache.DefaultCredentials;
-                using WebResponse response = request.GetResponse();
-                using Stream streamResponse = response.GetResponseStream();
-                StreamReader reader = new StreamReader(streamResponse);
-                string responseFromServer = reader.ReadToEnd();
-                if (!string.IsNullOrEmpty(responseFromServer))
-                {
-                    if (JsonConvert.DeserializeObject(responseFromServer) is JObject res)
-                    {
-                        if (res.TryGetValue("access_token", out JToken? jtoken))
-                        {
-                            toekn = jtoken.ToString();
-                        }
-                    }
-                }
-                reader.Close();
+                return false;
             }
 
-            if (toekn != null)
-                SendCacheStore.Set(key, toekn, DateTimeOffset.Now.AddHours(2));
+            var token = CreateAcessToken();
+            if (token == null)
+            {
+                return false;
+            }
 
-            return toekn;
+            return CreatePush(token, message.Title, message.Data);
         }
 
-        private bool PostMail(string accessToken, string title, string? data)
+        private bool CreatePush(string accessToken, string title, string? data)
         {
             var uri = "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=" + accessToken;
 
             var content = string.IsNullOrEmpty(data) ? title : title + "\n" + data;
-            var isImage = !String.IsNullOrEmpty(title) && IsUrl(title) && IsImage(title) && String.IsNullOrEmpty(data);
+            var isImage = !string.IsNullOrEmpty(title) && IsUrl(title) && IsImage(title) && string.IsNullOrEmpty(data);
             var imageData = isImage ? GetImage(title) : null;
             string mediaId = string.Empty;
             if (imageData != null)
-                mediaId = UpLoadIMage(accessToken, imageData);
+            {
+                mediaId = CreateImage(accessToken, imageData);
+            }
 
             //创建请求
             WebRequest myWebRequest = WebRequest.Create(uri);
@@ -148,7 +115,42 @@ namespace Inotify.Sends.Products
             return true;
         }
 
-        private string UpLoadIMage(string accessToken, byte[] bytes)
+        private string CreateAcessToken()
+        {
+            var key = Auth.Corpid + Auth.AgentID + Auth.Corpsecret;
+            var toekn = SendCacheStore.Get(key);
+            if (toekn == null)
+            {
+                var url = string.Format(@"https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid={0}&corpsecret={1}", Auth.Corpid, Auth.Corpsecret);
+
+                WebRequest request = WebRequest.Create(url);
+                request.Credentials = CredentialCache.DefaultCredentials;
+                using WebResponse response = request.GetResponse();
+                using Stream streamResponse = response.GetResponseStream();
+                StreamReader reader = new StreamReader(streamResponse);
+                string responseFromServer = reader.ReadToEnd();
+                if (!string.IsNullOrEmpty(responseFromServer))
+                {
+                    if (JsonConvert.DeserializeObject(responseFromServer) is JObject res)
+                    {
+                        if (res.TryGetValue("access_token", out JToken? jtoken))
+                        {
+                            toekn = jtoken.ToString();
+                        }
+                    }
+                }
+                reader.Close();
+            }
+
+            if (toekn != null)
+            {
+                SendCacheStore.Set(key, toekn, DateTimeOffset.Now.AddHours(2));
+            }
+
+            return toekn;
+        }
+
+        private string CreateImage(string accessToken, byte[] bytes)
         {
             try
             {
@@ -182,7 +184,7 @@ namespace Inotify.Sends.Products
             }
             catch
             {
-                
+
             }
 
             return null;

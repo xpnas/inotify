@@ -4,11 +4,7 @@ using Inotify.Data.Models.System;
 using Inotify.Sends;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NPoco;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Inotify.Controllers
 {
@@ -30,7 +26,7 @@ namespace Inotify.Controllers
                 githubClientID = SendCacheStore.GetSystemValue("githubClientID"),
                 githubClientSecret = SendCacheStore.GetSystemValue("githubClientSecret"),
                 githubEnable = githubEnable != "" && bool.Parse(githubEnable),
-                barkKeyId= SendCacheStore.GetSystemValue("barkKeyId"),
+                barkKeyId = SendCacheStore.GetSystemValue("barkKeyId"),
                 barkTeamId = SendCacheStore.GetSystemValue("barkTeamId"),
                 barkPrivateKey = SendCacheStore.GetSystemValue("barkPrivateKey"),
             });
@@ -111,9 +107,13 @@ namespace Inotify.Controllers
         public IActionResult GetUsers(string? query, int page, int pageSize)
         {
             if (query == null)
+            {
                 return OK(DBManager.Instance.DBase.Query<SendUserInfo>().ToPage(page, pageSize));
-            else return OK(DBManager.Instance.DBase.Query<SendUserInfo>().Where(e => e.UserName.Contains(query) || e.Email.Contains(query)).ToPage(page, pageSize));
-
+            }
+            else
+            {
+                return OK(DBManager.Instance.DBase.Query<SendUserInfo>().Where(e => e.UserName.Contains(query) || e.Email.Contains(query)).ToPage(page, pageSize));
+            }
         }
 
         [HttpGet, Route("GetSendInfos"), Authorize(Policys.Systems)]

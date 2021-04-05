@@ -2,17 +2,11 @@
 using Inotify.Data.Models;
 using Inotify.Sends;
 using Inotify.Sends.Products;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace Inotify.Controllers
 {
@@ -154,7 +148,10 @@ namespace Inotify.Controllers
         {
             var userInfo = DBManager.Instance.GetUser(UserName);
             if (userInfo != null)
+            {
                 return OK(userInfo.Token);
+            }
+
             return Fail();
 
         }

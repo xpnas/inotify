@@ -2,8 +2,6 @@ using Inotify.Data;
 using Inotify.Sends;
 
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
-using System;
 
 namespace Inotify.Controllers
 {
@@ -16,7 +14,10 @@ namespace Inotify.Controllers
         {
             if (DBManager.Instance.IsToken(token, out bool hasActive))
             {
-                if (!hasActive) return Fail(400, "you have no tunnel is acitve");
+                if (!hasActive)
+                {
+                    return Fail(400, "you have no tunnel is acitve");
+                }
 
                 if (!string.IsNullOrEmpty(key))
                 {
@@ -41,7 +42,10 @@ namespace Inotify.Controllers
                     Key = key,
                 };
 
-                if (SendTaskManager.Instance.SendMessage(message)) return OK();
+                if (SendTaskManager.Instance.SendMessage(message))
+                {
+                    return OK();
+                }
             }
 
             return Fail(400, $"token:{token} is not registered");

@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Inotify.Sends.Products
 {
@@ -29,19 +24,23 @@ namespace Inotify.Sends.Products
     [SendMethodKey("A3C1E614-717E-4CF1-BA9B-7242717FC037", "自定义POST", Order = 5)]
     public class HttpPostTemplate : SendTemplate<HttpPostAuth>
     {
-        public override HttpPostAuth Auth { get; set; }
 
         public override bool SendMessage(SendMessage message)
         {
             if (Auth.Data == null)
+            {
                 Auth.Data = "";
+            }
 
             if (string.IsNullOrEmpty(Auth.ContentType))
+            {
                 Auth.ContentType = "application/json";
-
+            }
 
             if (string.IsNullOrEmpty(Auth.Encoding))
+            {
                 Auth.Encoding = "utf-8";
+            }
 
             var url = Auth.URL.Replace("{title}", message.Title).Replace("{data}", message.Data);
             var webRequest = WebRequest.Create(url);

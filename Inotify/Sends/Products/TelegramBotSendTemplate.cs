@@ -1,10 +1,5 @@
 ﻿
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types.InputFiles;
 
@@ -26,7 +21,6 @@ namespace Inotify.Sends.Products
     public class TelegramBotSendTemplate : SendTemplate<TelegramBotAuth>
     {
 
-        public override TelegramBotAuth Auth { get; set; }
 
         public override bool SendMessage(SendMessage message)
         {
@@ -34,7 +28,7 @@ namespace Inotify.Sends.Products
             var proxy = GetProxy();
             var client = proxy == null ? new TelegramBotClient(Auth.BotToken) : new TelegramBotClient(Auth.BotToken, proxy);
             var content = string.IsNullOrEmpty(message.Title) ? message.Title : message.Title + "\n" + message.Data;
-            var isIMG = !String.IsNullOrEmpty(message.Title) && IsUrl(message.Title) && IsImage(message.Title) && String.IsNullOrEmpty(message.Data);
+            var isIMG = !string.IsNullOrEmpty(message.Title) && IsUrl(message.Title) && IsImage(message.Title) && string.IsNullOrEmpty(message.Data);
             if (isIMG)
             {
                 client.SendPhotoAsync(Auth.Chat_id, new InputOnlineFile(new Uri(message.Title)));

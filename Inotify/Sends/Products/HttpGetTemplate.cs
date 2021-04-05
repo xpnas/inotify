@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
+﻿using System.Net;
 
 namespace Inotify.Sends.Products
 {
@@ -16,7 +12,6 @@ namespace Inotify.Sends.Products
     [SendMethodKey("ADB11045-F2C8-457E-BF7E-1698AD37ED53", "自定义GET", Order = 4)]
     public class HttpGetTemplate : SendTemplate<HttpGetAuth>
     {
-        public override HttpGetAuth Auth { get; set; }
 
         public override bool SendMessage(SendMessage message)
         {

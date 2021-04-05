@@ -1,14 +1,10 @@
-﻿using Inotify.Sends;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Mail;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Inotify.Sends
@@ -86,8 +82,13 @@ namespace Inotify.Sends
                     if (item.Name != null && item.Value != null)
                     {
                         if (item.Type == InputType.CHECK)
+                        {
                             jObject.Add(item.Name, item.Value.ToLower() == "true");
-                        else jObject.Add(item.Name, item.Value);
+                        }
+                        else
+                        {
+                            jObject.Add(item.Name, item.Value);
+                        }
                     }
                 }
             }
@@ -125,8 +126,8 @@ namespace Inotify.Sends
     {
         public InputTypeValue InputTypeData { get; set; }
 
-   
-        private InputTypeAttribte(int order, string name, string description, string defaultValue, InputType type,bool show=true,bool readOnly=false)
+
+        private InputTypeAttribte(int order, string name, string description, string defaultValue, InputType type, bool show = true, bool readOnly = false)
         {
             InputTypeData = new InputTypeValue
             {
@@ -156,8 +157,7 @@ namespace Inotify.Sends
 
     public abstract class SendTemplate<T>
     {
-
-        public abstract T Auth { get; set; }
+        public T Auth { get; set; }
 
         public void Composition(string authInfo)
         {
@@ -173,7 +173,7 @@ namespace Inotify.Sends
                 .Select(e => e.InputTypeData)
                 .ToList();
 
-            var sendMethodKeyAttribute = this.GetType().GetCustomAttribute<SendMethodKeyAttribute>();
+            var sendMethodKeyAttribute = GetType().GetCustomAttribute<SendMethodKeyAttribute>();
 
             if (sendMethodKeyAttribute != null)
             {
@@ -190,10 +190,8 @@ namespace Inotify.Sends
             return null;
         }
 
-        public virtual bool SendMessage(SendMessage message)
-        {
-            return false;
-        }
+        public abstract bool SendMessage(SendMessage message);
+
 
         protected WebProxy GetProxy()
         {

@@ -1,10 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Inotify
 {
@@ -27,7 +23,9 @@ namespace Inotify
         public static StartUpManager Load()
         {
             if (_appManager == null)
+            {
                 _appManager = new StartUpManager();
+            }
 
             return _appManager;
         }
@@ -35,10 +33,14 @@ namespace Inotify
         public void Start(string[] args)
         {
             if (_running)
+            {
                 return;
+            }
 
             if (_tokenSource != null && _tokenSource.IsCancellationRequested)
+            {
                 return;
+            }
 
             _tokenSource = new CancellationTokenSource();
             _tokenSource.Token.ThrowIfCancellationRequested();
@@ -56,7 +58,9 @@ namespace Inotify
         public void Stop()
         {
             if (!_running)
+            {
                 return;
+            }
 
             _tokenSource.Cancel();
             _running = false;

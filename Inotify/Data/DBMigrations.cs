@@ -2,9 +2,6 @@
 using Inotify.Data.Models;
 using NPoco.Migrations;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Inotify.Data
 {
@@ -31,7 +28,9 @@ namespace Inotify.Data
             }
 
             if (!Migrator.TableExists<SendInfo>())
+            {
                 Migrator.CreateTable<SendInfo>(true).Execute();
+            }
 
             if (!Migrator.TableExists<SendUserInfo>())
             {
@@ -80,7 +79,7 @@ namespace Inotify.Data
     {
         protected override void execute()
         {
-    
+
             //对AuthInfo的AuthDate字段进行加密
             var sendAuthInfos = Migrator.Database.Query<SendAuthInfo>().ToList();
             sendAuthInfos.ForEach(sendAuthInfo =>

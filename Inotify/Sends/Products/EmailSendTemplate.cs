@@ -1,11 +1,7 @@
 ﻿using FluentEmail.Core;
-using FluentEmail.Liquid;
 using FluentEmail.Smtp;
-using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Mail;
-using System.Text;
 
 namespace Inotify.Sends.Products
 {
@@ -38,8 +34,6 @@ namespace Inotify.Sends.Products
     [SendMethodKey("EA2B43F7-956C-4C01-B583-0C943ABB36C3", "邮件推送", Order = 1)]
     public class EmailSendTemplate : SendTemplate<EmailAuth>
     {
-        public override EmailAuth Auth { get; set; }
-
         public override bool SendMessage(SendMessage message)
         {
             var smtpSender = new SmtpSender(new SmtpClient()
@@ -52,8 +46,7 @@ namespace Inotify.Sends.Products
                 Credentials = new NetworkCredential(Auth.From, Auth.Password),
             });
 
-            var email =
-                Email.From(Auth.From, Auth.FromName)
+            var email = Email.From(Auth.From, Auth.FromName)
               .Subject(message.Title)
               .Body(message.Data ?? "")
               .To(Auth.To);
