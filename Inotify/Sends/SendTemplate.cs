@@ -62,8 +62,9 @@ namespace Inotify.Sends
 
     public class InputTemeplate
     {
-        public string? Key { get; set; }
         public string? Type { get; set; }
+        public string? TypeName { get; set; }
+        public string? Key { get; set; }
         public string? Name { get; set; }
         public bool IsActive { get; set; }
         public string Warning { get; set; }
@@ -179,9 +180,10 @@ namespace Inotify.Sends
             {
                 return new InputTemeplate()
                 {
+                    Key = "",
                     Name = sendMethodKeyAttribute.Name,
-                    Type = sendMethodKeyAttribute.Name,
-                    Key = sendMethodKeyAttribute.Key,
+                    Type = sendMethodKeyAttribute.Key,
+                    TypeName = sendMethodKeyAttribute.Name,
                     Warning = sendMethodKeyAttribute.Waring,
                     Values = values
                 };

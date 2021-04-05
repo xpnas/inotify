@@ -90,7 +90,7 @@ Register(device_key) : Register(act, key, devicetoken);
 
                 if (barkSendAuthInfo == null)
                 {
-                    device_key = 16.GenerateCheckCode();
+                    device_key = Guid.NewGuid().ToString("N").ToUpper();
                     barkAuth = new BarkAuth() { DeviceKey = device_key, DeviceToken = device_token, IsArchive = "1", AutoMaticallyCopy = "1", Sound = "1107" };
                     barkSendAuthInfo = new SendAuthInfo()
                     {

@@ -41,14 +41,16 @@ namespace Inotify.Controllers
                     var sendTemplate = SendTaskManager.Instance.GetInputTemplate(sendAuthInfo.SendMethodTemplate);
                     if (sendTemplate != null)
                     {
+                       
+                        sendTemplate.Key = sendAuthInfo.Key;
+                        sendTemplate.SendAuthId = sendAuthInfo.Id;
                         sendTemplate.Name = sendAuthInfo.Name;
                         sendTemplate.AuthData = sendAuthInfo.AuthData;
-                        sendTemplate.SendAuthId = sendAuthInfo.Id;
                         sendTemplate.IsActive = sendAuthInfo.Active;
                         sendTemplate.AuthToTemplate(sendAuthInfo.AuthData);
                         userSendTemplates.Add(sendTemplate);
                     }
-                    if (barkTemplateAttribute.Key == sendTemplate.Key)
+                    if (barkTemplateAttribute.Key == sendTemplate.Type)
                     {
                         sendTemplate.Values.FirstOrDefault(e => e.Name == nameof(BarkSendTemplate.Auth.SendUrl)).Value = "";
                     }
@@ -96,10 +98,10 @@ namespace Inotify.Controllers
         public JsonResult AddSendAuth(InputTemeplate inputTemeplate)
         {
             var userInfo = DBManager.Instance.GetUser(UserName);
-            if (userInfo != null && inputTemeplate.Key != null && inputTemeplate.Name != null)
+            if (userInfo != null && inputTemeplate.Type != null && inputTemeplate.Name != null)
             {
                 var barkKey = typeof(BarkSendTemplate).GetCustomAttributes(typeof(SendMethodKeyAttribute), false).OfType<SendMethodKeyAttribute>().First().Key;
-                if (barkKey == inputTemeplate.Key)
+                if (barkKey == inputTemeplate.Type)
                 {
                     return Fail(406, "BARK通道勿手动添加，请使用APP添加BARK地址绑定");
                 }
@@ -109,9 +111,10 @@ namespace Inotify.Controllers
                     var sendAuth = new SendAuthInfo()
                     {
                         UserId = userInfo.Id,
-                        SendMethodTemplate = inputTemeplate.Key,
+                        SendMethodTemplate = inputTemeplate.Type,
                         AuthData = authInfo,
                         Name = inputTemeplate.Name,
+                        Key = Guid.NewGuid().ToString("N").ToUpper(),
                         CreateTime = DateTime.Now,
                         ModifyTime = DateTime.Now,
                     };

@@ -38,6 +38,8 @@
   * V2.0.0.3
     * 支持钉钉群消息
     * 支持飞书群消息
+  * V2.0.0.4
+    * 支持通道独立消息推送
 
 ## 使用方法
   1. Docker安装 
@@ -45,7 +47,7 @@
   ```
   docker run --name=inotify -d -p 8000:80 -v inotify_data:/inotify_data --restart=always xpnas/inotify:latest
   ```
-  * 开发版V2.0.0.3 
+  * 开发版V2.0.0.4 
   ```
   docker run --name=inotify -d -p 8000:80 -v inotify_data:/inotify_data --restart=always xpnas/inotify:master
   ```

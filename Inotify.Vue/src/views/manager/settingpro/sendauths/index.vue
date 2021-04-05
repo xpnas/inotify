@@ -3,8 +3,8 @@
     <el-dialog :title='title' :visible.sync='dialogVisible' :append-to-body='true'>
         <el-form ref="authform" :model="authform" label-width="120px" label-position='right' :rules="authformrules">
             <el-form-item label='通道类型'>
-                <el-select :disabled='isModify' value-key="key" v-model='selectTemplate' placeholder='请选择' @change="selectTemplateChange">
-                    <el-option v-for="item in sendTemplates" :key="item.key" :label="item.name" :value="item">
+                <el-select :disabled='isModify' value-key="type" v-model='selectTemplate' placeholder='请选择' @change="selectTemplateChange">
+                    <el-option v-for="item in sendTemplates" :key="item.type" :label="item.typeName" :value="item">
                     </el-option>
                 </el-select>
             </el-form-item>
@@ -13,6 +13,12 @@
             </el-form-item>
             <el-form-item v-for="(item) in selectTemplate.values" :label="item.description" :key="item.name" required>
                 <el-input v-model="item.value" :placeholder="item.default" :readonly="item.readonly"></el-input>
+            </el-form-item>
+            <el-form-item label="绑定地址" v-show="isBark">
+                <el-input v-model="selectTemplate.barkUrl" readonly></el-input>
+            </el-form-item>
+            <el-form-item label="二维码地址" v-show="isBark">
+                <div id="bark"></div>
             </el-form-item>
         </el-form>
 
@@ -32,7 +38,7 @@
         </el-table-column>
         <el-table-column label='类型' width='110' align='center'>
             <template slot-scope='scope'>
-                <span>{{ scope.row.type }}</span>
+                <span>{{ scope.row.typeName }}</span>
             </template>
         </el-table-column>
         <el-table-column label='名称' width='110' align='center'>
@@ -40,9 +46,9 @@
                 <span>{{ scope.row.name }}</span>
             </template>
         </el-table-column>
-        <el-table-column label='配置信息' align='center'>>
+        <el-table-column label='调用接口' align='center'>
             <template slot-scope='scope'>
-                {{ scope.row.authData }}
+                <el-link type="primary" target="_blank"> <a :href="scope.row.url" target="_blank" class="buttonText">{{scope.row.url}}</a></el-link>
             </template>
         </el-table-column>
         <el-table-column align='center' prop='created_at' label='编辑' width='200'>
@@ -103,7 +109,8 @@ export default {
             isModify: false,
             authform: {},
             title: "设置",
-            sendKey: ""
+            sendKey: "",
+            isBark: false
         }
     },
     created() {
@@ -114,6 +121,10 @@ export default {
             this.listLoading = true
             getSendAuths().then((response) => {
                 this.sendAuthinfos = response.data
+                let origin = window.document.location.origin;
+                for (var sendinfo of this.sendAuthinfos) {
+                    sendinfo.url = origin + '/' + sendinfo.key + ".send/{title}/{data}"
+                }
                 this.listLoading = false
             })
             getSendTemplates().then((response) => {
@@ -129,11 +140,24 @@ export default {
         },
         selectTemplateChange(selectTemplate) {
             this.selectTemplate = deepClone(selectTemplate)
+            this.isBark = false;
             if (this.selectTemplate.warning) {
                 this.$message({
                     message: this.selectTemplate.warning,
                     type: 'warning'
                 })
+                if (this.selectTemplate.typeName == 'Bark') {
+                    this.isBark = true;
+                    this.selectTemplate.values = [];
+                    let origin = window.document.location.origin;
+                    this.selectTemplate.barkUrl = origin + '?act=' + this.sendKey;
+                    document.getElementById("bark").innerHTML = '';
+                    new QRCode(document.getElementById('bark'), {
+                        text: this.selectTemplate.barkUrl,
+                        width: 250,
+                        height: 250,
+                    });
+                }
             }
         },
         submitForm(formName) {
@@ -181,6 +205,7 @@ export default {
             });
         },
         addAuth() {
+            this.isBark = false;
             this.title = '新增设置'
             this.dialogVisible = true
             this.isModify = false
@@ -190,21 +215,18 @@ export default {
         modifyAuth(index, row) {
             this.title = '修改设置'
             this.isModify = true;
+            this.isBark = false;
             this.selectTemplate = deepClone(row);
-            if (this.selectTemplate.type == "Bark") {
-                let wPath = window.document.location.href;
-                let pathName = this.$route.path;
-                let pos = wPath.indexOf(pathName);
-                let localhostPath = wPath.substring(0, pos);
-                localhostPath = localhostPath.replace("#", "");
-
+            if (this.selectTemplate.typeName == "Bark") {
+                this.isBark = true;
+                let origin = window.document.location.origin;
                 var devieItem = this.selectTemplate.values.find(item => {
                     return item.name == "DeviceKey"
                 })
                 var sendUrlItem = this.selectTemplate.values.find(item => {
                     return item.name == "SendUrl"
                 });
-                sendUrlItem.value = localhostPath + "?act=" + this.sendKey + "/" + devieItem.value + "/{title}/{data}"
+                sendUrlItem.value = origin + "?act=" + this.sendKey + "/" + devieItem.value + "/{title}/{data}"
             }
 
             this.dialogVisible = true;
@@ -234,6 +256,9 @@ export default {
                     this.$message.error(state ? '激活失败' : '注销失败');
                 }
             })
+        },
+        getBarkUrl() {
+
         }
     }
 }

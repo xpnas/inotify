@@ -109,7 +109,7 @@ namespace Inotify
                     if (match.Success)
                     {
                         rewriteContext.HttpContext.Request.Path = @"/api/send";
-                        rewriteContext.HttpContext.Request.QueryString = new QueryString($"?token={groups[1]}&key={groups[2]}&title={groups[3]}&date={groups[4]}");
+                        rewriteContext.HttpContext.Request.QueryString = new QueryString($"?key={groups[2]}&title={groups[3]}&date={groups[4]}");
                     }
                     else
                     {
@@ -117,7 +117,7 @@ namespace Inotify
                         if (match.Success)
                         {
                             rewriteContext.HttpContext.Request.Path = @"/api/send";
-                            rewriteContext.HttpContext.Request.QueryString = new QueryString($"?token={groups[1]}&key={groups[2]}&title={groups[3]}");
+                            rewriteContext.HttpContext.Request.QueryString = new QueryString($"?key={groups[2]}&title={groups[3]}");
                         }
                         else
                         {
@@ -125,7 +125,7 @@ namespace Inotify
                             if (match.Success)
                             {
                                 rewriteContext.HttpContext.Request.Path = @"/api/send";
-                                rewriteContext.HttpContext.Request.QueryString = new QueryString($"?token={groups[1]}&key={groups[2]}");
+                                rewriteContext.HttpContext.Request.QueryString = new QueryString($"?key={groups[2]}");
                             }
                             else if (rewriteContext.HttpContext.Request.QueryString.Value.StartsWith("?"))
                             {

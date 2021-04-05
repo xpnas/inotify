@@ -20,17 +20,17 @@
 
         <el-divider content-position="left">重置授权</el-divider>
         <el-form ref="resetform" :model="keyForm" label-width="20%">
-            <el-form-item label="当前SendKey">
+            <el-form-item label="当前Token">
                 <el-input v-model="keyForm.sendKey" :readonly="true"></el-input>
             </el-form-item>
-            <el-form-item label="快捷地址(标题)">
+            <el-form-item label="调用接口(标题)">
                 <el-input type="textarea" v-model="keyForm.sendUrlTitle" :readonly="true"></el-input>
             </el-form-item>
-            <el-form-item label="快捷地址(完整)">
+            <el-form-item label="调用接口(完整)">
                 <el-input type="textarea" v-model="keyForm.sendUrl" :readonly="true"></el-input>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary" @click="onReSendKey('resetform')">重置SendKey</el-button>
+                <el-button type="primary" @click="onReSendKey('resetform')">重置Token</el-button>
             </el-form-item>
         </el-form>
 
@@ -100,14 +100,10 @@ export default {
             getSendKey().then((response) => {
                 this.keyForm.sendKey = response.data;
                 this.messageForm.sendKey = response.data;
-                let wPath = window.document.location.href;
-                let pathName = this.$route.path;
-                let pos = wPath.indexOf(pathName);
-                let localhostPath = wPath.substring(0, pos);
-                localhostPath = localhostPath.replace("#", "");
-                this.keyForm.sendUrlTitle = localhostPath + this.keyForm.sendKey + '.send' + "/{title}"
-                this.keyForm.sendUrl = localhostPath + this.keyForm.sendKey + '.send' + "/{title}/{data}"
-                this.keyForm.barkUrl = wPath.substring(0, pos - 2) + '?act=' + this.keyForm.sendKey
+                let origin = window.document.location.origin;
+                this.keyForm.sendUrlTitle = origin + '/' + this.keyForm.sendKey + '.send' + "/{title}"
+                this.keyForm.sendUrl = origin + '/' + this.keyForm.sendKey + '.send' + "/{title}/{data}"
+                this.keyForm.barkUrl = origin + '?act=' + this.keyForm.sendKey
                 this.listLoading = false;
                 new QRCode(document.getElementById("qrcode"), {
                     text: this.keyForm.barkUrl,

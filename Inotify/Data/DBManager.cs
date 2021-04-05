@@ -136,12 +136,18 @@ namespace Inotify.Data
             return false;
         }
 
-        public bool IsSendKey(string key, out bool isActive)
+        public bool IsSendKey(string key, out bool isActive, out string token)
         {
             isActive = false;
+            token = null;
             var sendAuthInfo = DBase.Query<SendAuthInfo>().FirstOrDefault(e => e.Key == key);
             if (sendAuthInfo != null)
             {
+                var userInfo = DBase.Query<SendUserInfo>().FirstOrDefault(e => e.Id == sendAuthInfo.UserId);
+                if (userInfo != null&& userInfo.Token!=null)
+                {
+                    token = userInfo.Token;
+                }
                 isActive = sendAuthInfo.Active;
                 return true;
             }
@@ -219,6 +225,7 @@ namespace Inotify.Data
                 var builder = new MigrationBuilder(MigrationName, DBase);
                 builder.Append(new Version(2, 0, 0, 0), new V2UpdateMigration());
                 builder.Append(new Version(2, 0, 0, 1), new V2001UpdateMigration());
+                builder.Append(new Version(2, 0, 0, 4), new V2004UpdateMigration());
                 builder.Execute();
             }
         }

@@ -124,9 +124,9 @@ namespace Inotify.Sends
                 var getTemeplateMethod = sendMethodTemplateType.GetMethod("GetTemeplate");
                 if (getTemeplateMethod != null)
                 {
-                    if (getTemeplateMethod.Invoke(obj, null) is InputTemeplate temeplate && temeplate.Key != null)
+                    if (getTemeplateMethod.Invoke(obj, null) is InputTemeplate temeplate && temeplate.Type != null)
                     {
-                        sendTemplates.Add(temeplate.Key, temeplate);
+                        sendTemplates.Add(temeplate.Type, temeplate);
                     }
                 }
             }

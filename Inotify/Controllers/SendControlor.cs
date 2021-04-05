@@ -19,21 +19,6 @@ namespace Inotify.Controllers
                     return Fail(400, "you have no tunnel is acitve");
                 }
 
-                if (!string.IsNullOrEmpty(key))
-                {
-                    if (DBManager.Instance.IsSendKey(key, out bool isActive))
-                    {
-                        if (!isActive)
-                        {
-                            return Fail(400, $"device:{key} tunnel is not acitve");
-                        }
-                    }
-                    else
-                    {
-                        return Fail(400, $"device:{key} is not registered");
-                    }
-                }
-
                 var message = new SendMessage()
                 {
                     Token = token,
@@ -45,6 +30,34 @@ namespace Inotify.Controllers
                 if (SendTaskManager.Instance.SendMessage(message))
                 {
                     return OK();
+                }
+            }
+            else
+            {
+                key = token;
+                if (DBManager.Instance.IsSendKey(token, out bool isActive, out token))
+                {
+                    if (!isActive)
+                    {
+                        return Fail(400, $"device:{key} tunnel is not acitve");
+                    }
+                    var message = new SendMessage()
+                    {
+                        Token = token,
+                        Title = title,
+                        Data = data,
+                        Key = key,
+                    };
+
+                    if (SendTaskManager.Instance.SendMessage(message))
+                    {
+                        return OK();
+                    }
+
+                }
+                else
+                {
+                    return Fail(400, $"device:{key} is not registered");
                 }
             }
 
