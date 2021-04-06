@@ -43,11 +43,11 @@
 
 ## 使用方法
   1. Docker安装 
-   * 稳定版V1.0
+   * 稳定版V2.0
   ```
   docker run --name=inotify -d -p 8000:80 -v inotify_data:/inotify_data --restart=always xpnas/inotify:latest
   ```
-  * 开发版V2.0.0.4 
+  * 开发版V2.0.0.5 
   ```
   docker run --name=inotify -d -p 8000:80 -v inotify_data:/inotify_data --restart=always xpnas/inotify:master
   ```
