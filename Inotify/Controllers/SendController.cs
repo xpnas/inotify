@@ -7,10 +7,10 @@ namespace Inotify.Controllers
 {
     [ApiController]
     [Route("api")]
-    public class SendController : BaseControlor
+    public class SendController : BaseController
     {
         [HttpGet, Route("send")]
-        public JsonResult Send(string token, string title, string? data, string? key)
+        public JsonResult Send(string? token, string? title, string? data)
         {
             if (DBManager.Instance.IsToken(token, out bool hasActive))
             {
@@ -23,8 +23,7 @@ namespace Inotify.Controllers
                 {
                     Token = token,
                     Title = title,
-                    Data = data,
-                    Key = key,
+                    Data = data
                 };
 
                 if (SendTaskManager.Instance.SendMessage(message))
@@ -34,8 +33,8 @@ namespace Inotify.Controllers
             }
             else
             {
-                key = token;
-                if (DBManager.Instance.IsSendKey(token, out bool isActive, out token))
+                var key = token;
+                if (DBManager.Instance.IsSendKey(key, out bool isActive, out token))
                 {
                     if (!isActive)
                     {

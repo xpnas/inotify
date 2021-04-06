@@ -12,7 +12,7 @@ namespace Inotify.Controllers
 {
     [ApiController]
     [Route("api/setting")]
-    public class SettingControlor : BaseControlor
+    public class SettingController : BaseController
     {
         [HttpGet, Authorize(Policys.SystemOrUsers)]
         public JsonResult Index()

@@ -10,7 +10,7 @@ namespace Inotify.Controllers
 {
     [ApiController]
     [Route("api/settingsys")]
-    public class SetttingSysControlor : BaseControlor
+    public class SetttingSysController : BaseController
     {
         [HttpGet, Route("GetGlobal"), Authorize(Policys.Systems)]
         public IActionResult GetGlobal()

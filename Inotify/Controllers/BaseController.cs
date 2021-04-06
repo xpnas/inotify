@@ -1,8 +1,11 @@
 ﻿using Inotify.Common;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
+using System.Xml;
 
 namespace Inotify.Controllers
 {
@@ -35,7 +38,7 @@ namespace Inotify.Controllers
     }
 
 
-    public class BaseControlor : ControllerBase
+    public class BaseController : ControllerBase
     {
         public string UserName
         {
@@ -127,6 +130,39 @@ namespace Inotify.Controllers
         protected JsonResult Json(object obj)
         {
             return new JsonResult(obj);
+        }
+
+        protected string GetPostParams(HttpContext context)
+        {
+            string param = string.Empty;
+            if (context.Request.Method.ToLower().Equals("post"))
+            {
+                param += "[post]";
+                foreach (var key in context.Request.Form.Keys.ToList())
+                {
+                    param += key + ":" + context.Request.Form[key].ToString();
+                }
+            }
+            else if (context.Request.Method.ToLower().Equals("get"))
+            {
+                param += "[get]" + context.Request.QueryString.Value;
+            }
+            else
+            {
+                param += "[" + context.Request.Method + "]";
+            }
+
+            return param;
+        }
+
+        protected string GetPostXML()
+        {
+            Stream reqStream = Request.Body;
+            using (StreamReader reader = new StreamReader(reqStream))
+            {
+                return  reader.ReadToEnd();
+            }
+
         }
     }
 }

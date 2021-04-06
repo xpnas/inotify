@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Rewrite;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -88,6 +89,10 @@ namespace Inotify
             {
                 options.JsonSerializerOptions.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
             });
+
+            services.Configure<KestrelServerOptions>(x => x.AllowSynchronousIO = true)
+                .Configure<IISServerOptions>(x => x.AllowSynchronousIO = true);
+
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -97,6 +102,12 @@ namespace Inotify
                 app.UseDeveloperExceptionPage();
             }
 
+            app.Use(next => context =>
+            {
+                context.Request.EnableBuffering();
+                return next(context);
+            });
+
             var options = new RewriteOptions();
             options.Add(rewriteContext =>
             {
@@ -105,30 +116,34 @@ namespace Inotify
                 {
                     var queryValue = rewriteContext.HttpContext.Request.QueryString.Value;
                     match = Regex.Match(queryValue, @"^\?act=(.*)/(.*)/(.*)/(.*)$");
-                    var groups = match.Groups;
+                 
                     if (match.Success)
                     {
+                        var groups = match.Groups;
                         rewriteContext.HttpContext.Request.Path = @"/api/send";
-                        rewriteContext.HttpContext.Request.QueryString = new QueryString($"?key={groups[2]}&title={groups[3]}&date={groups[4]}");
+                        rewriteContext.HttpContext.Request.QueryString = new QueryString($"?token={groups[2]}&title={groups[3]}&date={groups[4]}");
                     }
                     else
                     {
                         match = Regex.Match(queryValue, @"^\?act=(.*)/(.*)/(.*)$");
                         if (match.Success)
                         {
+                            var groups = match.Groups;
                             rewriteContext.HttpContext.Request.Path = @"/api/send";
-                            rewriteContext.HttpContext.Request.QueryString = new QueryString($"?key={groups[2]}&title={groups[3]}");
+                            rewriteContext.HttpContext.Request.QueryString = new QueryString($"?token={groups[2]}&title={groups[3]}");
                         }
                         else
                         {
                             match = Regex.Match(queryValue, @"^\?act=(.*)/(.*)$");
                             if (match.Success)
                             {
+                                var groups = match.Groups;
                                 rewriteContext.HttpContext.Request.Path = @"/api/send";
-                                rewriteContext.HttpContext.Request.QueryString = new QueryString($"?key={groups[2]}");
+                                rewriteContext.HttpContext.Request.QueryString = new QueryString($"?token={groups[2]}");
                             }
                             else if (rewriteContext.HttpContext.Request.QueryString.Value.StartsWith("?"))
                             {
+                                var groups = match.Groups;
                                 rewriteContext.HttpContext.Request.Path = @"/info";
                                 rewriteContext.HttpContext.Request.QueryString = new QueryString();
                             }

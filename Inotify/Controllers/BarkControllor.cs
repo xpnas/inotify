@@ -14,7 +14,7 @@ namespace Inotify.Controllers
 
     [ApiController]
     [Route("/")]
-    public class BarkControlor : BaseControlor
+    public class BarkControllor : BaseController
     {
         [HttpGet, Route("Ping")]
         public JsonResult Ping()
@@ -47,8 +47,7 @@ namespace Inotify.Controllers
         [HttpGet, Route("Register")]
         public JsonResult Register(string? act, string? key, string? devicetoken, string? device_key)
         {
-            return !string.IsNullOrEmpty(device_key) ?
-Register(device_key) : Register(act, key, devicetoken);
+            return !string.IsNullOrEmpty(device_key) ? Register(device_key) : Register(act, key, devicetoken);
         }
 
         [HttpPost, Route("Register")]
@@ -90,7 +89,8 @@ Register(device_key) : Register(act, key, devicetoken);
 
                 if (barkSendAuthInfo == null)
                 {
-                    device_key = Guid.NewGuid().ToString("N").ToUpper();
+                    if(string.IsNullOrEmpty(device_key))
+                        device_key = Guid.NewGuid().ToString("N").ToUpper();
                     barkAuth = new BarkAuth() { DeviceKey = device_key, DeviceToken = device_token, IsArchive = "1", AutoMaticallyCopy = "1", Sound = "1107" };
                     barkSendAuthInfo = new SendAuthInfo()
                     {

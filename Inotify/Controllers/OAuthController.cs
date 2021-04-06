@@ -20,7 +20,7 @@ namespace Inotify.Controllers
 {
     [ApiController]
     [Route("api/oauth")]
-    public class OAuthController : BaseControlor
+    public class OAuthController : BaseController
     {
         private readonly IGitHubLogin m_gitHubLogin;
 
