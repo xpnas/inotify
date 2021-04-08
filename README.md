@@ -47,7 +47,7 @@
   ```
   docker run --name=inotify -d -p 8000:80 -v inotify_data:/inotify_data --restart=always xpnas/inotify:latest
   ```
-  * 开发版V2.0.0.5 
+  * 开发版V2.1 
   ```
   docker run --name=inotify -d -p 8000:80 -v inotify_data:/inotify_data --restart=always xpnas/inotify:master
   ```
