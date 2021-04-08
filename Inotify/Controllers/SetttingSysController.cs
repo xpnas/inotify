@@ -120,7 +120,7 @@ namespace Inotify.Controllers
         public IActionResult GetSendInfos(string? start, string? end)
         {
             var templates = SendTaskManager.Instance.GetInputTemeplates();
-            var sendInfos = DBManager.Instance.DBase.Fetch<SendInfo>();
+            var sendInfos = DBManager.Instance.DBase.Fetch<SendInfo>().Where(e=>!string.IsNullOrEmpty( e.TemplateID)).ToList();
             var sendInfoQuerys = sendInfos.Where(e => int.Parse(e.Date) >= int.Parse(start) && int.Parse(e.Date) <= int.Parse(end)).ToList();
             var sendInfoGroups = sendInfoQuerys.GroupBy(e => e.Date).Select(e => new { date = e.Key, count = e.Sum(item => item.Count) }).ToList();
             var sendTypeInfoGroups = sendInfoQuerys.GroupBy(e => e.TemplateID).Select(e => new { date = e.Key, count = e.Sum(item => item.Count) }).ToList();

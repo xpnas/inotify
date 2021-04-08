@@ -164,17 +164,10 @@ namespace Inotify.Data
             return DBase.Query<SendUserInfo>().FirstOrDefault(e => e.UserName == userName);
         }
 
-        public string GetSendAuthInfo(string token, out string guid)
+        public string GetSendAuthInfo(string key, out string guid)
         {
-            guid = string.Empty;
-            var upToekn = token.ToUpper();
-            var userInfo = DBManager.Instance.DBase.Query<SendUserInfo>().FirstOrDefault(e => e.Token == upToekn && e.Active);
-            if (userInfo == null)
-            {
-                return null;
-            }
-
-            var authInfo = DBManager.Instance.DBase.Query<SendAuthInfo>().FirstOrDefault(e => e.Id == userInfo.SendAuthId && e.UserId == userInfo.Id);
+            guid = null;
+            var authInfo = DBManager.Instance.DBase.Query<SendAuthInfo>().FirstOrDefault(e => e.Key== key.ToUpper());
             if (authInfo == null)
             {
                 return null;

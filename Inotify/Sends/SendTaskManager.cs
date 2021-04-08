@@ -178,15 +178,17 @@ namespace Inotify.Sends
                                         var result = sendMessageMethod.Invoke(sendMethodTemplateActor, new object[] { message });
                                         if (result != null)
                                         {
-                                            m_analyseMessages.Add(message);
+                                            var logMessage = new SendMessage(message);
+                                            logMessage.Key = authInfo.Key;
+                                            m_analyseMessages.Add(logMessage);
                                             if ((bool)result)
                                             {
-                                                OnSendSucessed?.Invoke(this, message);
+                                                OnSendSucessed?.Invoke(this, logMessage);
                                                 continue;
                                             }
                                             else
                                             {
-                                                OnSendFailed?.Invoke(this, message);
+                                                OnSendFailed?.Invoke(this, logMessage);
                                             }
                                         }
 
@@ -213,7 +215,7 @@ namespace Inotify.Sends
             {
                 var message = m_analyseMessages.Take();
                 var date = DateTime.Now.ToString("yyyyMMdd");
-                var authData = DBManager.Instance.GetSendAuthInfo(message.Token, out string temeplateId);
+                var authData = DBManager.Instance.GetSendAuthInfo(message.Key, out string temeplateId);
 
                 if (temeplateId != null)
                 {
