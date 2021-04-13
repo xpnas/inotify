@@ -200,12 +200,13 @@ namespace Inotify.Data
         {
 
             var codeVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-            var migrationBuilder = new MigrationBuilder(MigrationName, DBase);
             var versionProvider = new DatabaseCurrentVersionProvider(DBase);
 
             if (!m_migrator.TableExists<SystemInfo>())
             {
+                var migrationBuilder = new MigrationBuilder(MigrationName, DBase);
                 migrationBuilder.Append(new Version(codeVersion.ToString()), new LatestMigration());
+                migrationBuilder.Execute();
                 versionProvider.SetMigrationVersion(MigrationName, new Version(codeVersion.ToString()));
             }
             else
