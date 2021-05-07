@@ -53,7 +53,7 @@ namespace Inotify
                     {
                         OnAuthenticationFailed = context =>
                         {
-                            var payload = JsonConvert.SerializeObject(new { message = "»œ÷§ ß∞‹", code = 403 });
+                            var payload = JsonConvert.SerializeObject(new { message = "ËÆ§ËØÅÂ§±Ë¥•", code = 403 });
                             context.Response.ContentType = "application/json";
                             context.Response.StatusCode = StatusCodes.Status200OK;
                             context.Response.WriteAsync(payload);
@@ -62,7 +62,7 @@ namespace Inotify
                         },
                         OnForbidden = context =>
                          {
-                             var payload = JsonConvert.SerializeObject(new { message = "Œ¥æ≠ ⁄»®", code = 405 });
+                             var payload = JsonConvert.SerializeObject(new { message = "Êú™ÁªèÊéàÊùÉ", code = 405 });
                              context.Response.ContentType = "application/json";
                              context.Response.StatusCode = StatusCodes.Status200OK;
                              context.Response.WriteAsync(payload);
@@ -121,7 +121,7 @@ namespace Inotify
                     {
                         var groups = match.Groups;
                         rewriteContext.HttpContext.Request.Path = @"/api/send";
-                        rewriteContext.HttpContext.Request.QueryString = new QueryString($"?token={groups[2]}&title={groups[3]}&date={groups[4]}");
+                        rewriteContext.HttpContext.Request.QueryString = new QueryString($"?token={groups[2]}&title={groups[3]}&data={groups[4]}");
                     }
                     else
                     {
