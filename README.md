@@ -27,27 +27,13 @@
 - [x] 飞书群机器人
 - [x] 自定义
 
-## 更新日志
-
-  * V1.0
-    * 支持企业微信应用、电报、SMTP消息
-  * V2.0.0.1
-    * 支持自定义Get、POST
-  * V2.0.0.2
-    * 支持BARK
-  * V2.0.0.3
-    * 支持钉钉群消息
-    * 支持飞书群消息
-  * V2.0.0.4
-    * 支持通道独立消息推送
-
 ## 使用方法
   1. Docker安装 
-   * 稳定版V2.0
+  * 发布版
   ```
   docker run --name=inotify -d -p 8000:80 -v inotify_data:/inotify_data --restart=always xpnas/inotify:latest
   ```
-  * 开发版V2.1 
+  * 开发版
   ```
   docker run --name=inotify -d -p 8000:80 -v inotify_data:/inotify_data --restart=always xpnas/inotify:master
   ```
