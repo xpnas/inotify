@@ -25,6 +25,21 @@ namespace Inotify.Data
                     key = "administrators",
                     Value = "admin"
                 });
+                Migrator.Database.Insert(new SystemInfo()
+                {
+                    key = "barkKeyId",
+                    Value = "TEg0VDlWNVU0Ug==".Base64Decode(),
+                });
+                Migrator.Database.Insert(new SystemInfo()
+                {
+                    key = "barkTeamId",
+                    Value = "NVU4TEJSWEczQQ==".Base64Decode(),
+                });
+                Migrator.Database.Insert(new SystemInfo()
+                {
+                    key = "barkPrivateKey",
+                    Value = "LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tCk1JR1RBZ0VBTUJNR0J5cUdTTTQ5QWdFR0NDcUdTTTQ5QXdFSEJIa3dkd0lCQVFRZzR2dEMzZzVMNUhnS0dKMitUMWVBMHRPaXZSRXZFQVkyZytqdVJYSmtZTDJnQ2dZSUtvWkl6ajBEQVFlaFJBTkNBQVNtT3MzSmtTeW9HRVdac1VHeEZzLzRwdzFySWxTVjJJQzE5TTh1M0c1a3EzNnVwT3d5RldqOUdpM0VqYzlkM3NDNytTSFJxWHJFQUpvdzgvN3RScFYrCi0tLS0tRU5EIFBSSVZBVEUgS0VZLS0tLS0=".Base64Decode()
+                });
             }
 
             if (!Migrator.TableExists<SendInfo>())
