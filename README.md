@@ -6,8 +6,6 @@
 
 类似Server酱、容易扩展
 
-示例站点：https://inotify.cf
-
 ## 功能支持
 
 - [x] 通道设置  
