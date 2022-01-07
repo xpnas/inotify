@@ -237,8 +237,11 @@ namespace Inotify.Sends
         {
             if (IsUrl(url) && IsImage(url))
             {
-                WebClient mywebclient = new WebClient();
-                return mywebclient.DownloadData(url);
+                using (WebClient mywebclient = new WebClient())
+                {
+                    return mywebclient.DownloadData(url);
+                }
+      
             }
             return null;
         }

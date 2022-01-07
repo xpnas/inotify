@@ -49,9 +49,6 @@ namespace Inotify.Controllers
                         sendTemplate.IsActive = sendAuthInfo.Active;
                         sendTemplate.AuthToTemplate(sendAuthInfo.AuthData);
                         userSendTemplates.Add(sendTemplate);
-                    }
-                    if (barkTemplateAttribute.Key == sendTemplate.Type)
-                    {
                         sendTemplate.Values.FirstOrDefault(e => e.Name == nameof(BarkSendTemplate.Auth.SendUrl)).Value = "";
                     }
                 }
