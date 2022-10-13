@@ -1,6 +1,6 @@
 # inotify
 
-[![docker](https://github.com/xpnas/inotify/actions/workflows/docker.yml/badge.svg)](https://github.com/xpnas/inotify/actions/workflows/docker.yml)
+[![docker](https://github.com/xpnas/inotify/actions/workflows/docker.yml/badge.svg?branch=master)](https://github.com/xpnas/inotify/actions/workflows/docker.yml)
 
 一个简易的消息通知系统，支持企业微信、电报机器人、邮件推送
 
