@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Net.Http;
 using Telegram.Bot;
 using Telegram.Bot.Types.InputFiles;
 
@@ -26,7 +27,13 @@ namespace Inotify.Sends.Products
         {
 
             var proxy = GetProxy();
-            var client = proxy == null ? new TelegramBotClient(Auth.BotToken) : new TelegramBotClient(Auth.BotToken, proxy);
+            var proxyHttpClientHandler = new HttpClientHandler
+            {
+                Proxy = proxy,
+                UseProxy = true,
+            };
+            var httpClient = new HttpClient(proxyHttpClientHandler);      
+            var client = proxy == null ? new TelegramBotClient(Auth.BotToken) : new TelegramBotClient(Auth.BotToken, httpClient);
             var content = string.IsNullOrEmpty(message.Title) ? message.Title : message.Title + "\n" + message.Data;
             var isIMG = !string.IsNullOrEmpty(message.Title) && IsUrl(message.Title) && IsImage(message.Title) && string.IsNullOrEmpty(message.Data);
             if (isIMG)

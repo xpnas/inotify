@@ -203,7 +203,7 @@ namespace Inotify.Sends
                 if (proxyurl != null)
                 {
 
-                    WebProxy proxy = new WebProxy
+                    WebProxy proxy = new WebProxy()
                     {
                         Address = new Uri(proxyurl)
                     };
