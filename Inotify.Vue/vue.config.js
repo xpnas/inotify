@@ -31,20 +31,20 @@ const cdn = {
     vuex: 'Vuex',
     'vue-router': 'VueRouter'
   },
-  css: [`https://cdn.bootcdn.net/ajax/libs/element-ui/${elementV}/theme-chalk/index.css`, `https://cdn.bootcdn.net/ajax/libs/nprogress/${nprogressV}/nprogress.min.css`, `https://lib.baomitu.com/normalize/${normalizeV}/normalize.css`],
+  css: [`https://cdnjs.cloudflare.com/ajax/libs/element-ui/${elementV}/theme-chalk/index.css`, `https://cdnjs.cloudflare.com/ajax/libs/nprogress/${nprogressV}/nprogress.min.css`, `https://lib.baomitu.com/normalize/${normalizeV}/normalize.css`],
   js: [
-    `https://cdn.bootcdn.net/ajax/libs/vue/${vueV}/vue.min.js`,
-    `https://cdn.bootcdn.net/ajax/libs/vuex/${vuexV}/vuex.min.js`,
-    `https://cdn.bootcdn.net/ajax/libs/js-cookie/${jscookieV}/js.cookie.js`,
-    `https://cdn.bootcdn.net/ajax/libs/element-ui/${elementV}/index.js`,
-    `https://cdn.bootcdn.net/ajax/libs/axios/${axiosV}/axios.min.js`,
-    `https://cdn.bootcdn.net/ajax/libs/moment.js/2.29.1/moment.min.js`,
-    `https://cdn.bootcdn.net/ajax/libs/echarts/4.9.0-rc.1/echarts.min.js`,
-    `https://cdn.bootcdn.net/ajax/libs/vue-router/${routerV}/vue-router.min.js`,
-    `https://cdn.bootcdn.net/ajax/libs/element-ui/${elementV}/locale/zh-CN.js`,
-    `https://cdn.bootcdn.net/ajax/libs/js-cookie/${cookieV}/js.cookie.min.js`,
-    `https://cdn.bootcdn.net/ajax/libs/nprogress/${nprogressV}/nprogress.min.js`,
-    `https://cdn.bootcdn.net/ajax/libs/qrcodejs/1.0.0/qrcode.js`
+    `https://cdnjs.cloudflare.com/ajax/libs/vue/${vueV}/vue.min.js`,
+    `https://cdnjs.cloudflare.com/ajax/libs/vuex/${vuexV}/vuex.min.js`,
+    `https://cdnjs.cloudflare.com/ajax/libs/js-cookie/${jscookieV}/js.cookie.js`,
+    `https://cdnjs.cloudflare.com/ajax/libs/element-ui/${elementV}/index.js`,
+    `https://cdnjs.cloudflare.com/ajax/libs/axios/${axiosV}/axios.min.js`,
+    `https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js`,
+    `https://cdnjs.cloudflare.com/ajax/libs/echarts/4.9.0-rc.1/echarts.min.js`,
+    `https://cdnjs.cloudflare.com/ajax/libs/vue-router/${routerV}/vue-router.min.js`,
+    `https://cdnjs.cloudflare.com/ajax/libs/element-ui/${elementV}/locale/zh-CN.js`,
+    `https://cdnjs.cloudflare.com/ajax/libs/js-cookie/${cookieV}/js.cookie.min.js`,
+    `https://cdnjs.cloudflare.com/ajax/libs/nprogress/${nprogressV}/nprogress.min.js`,
+    `https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.js`
   ]
 }
 
